@@ -3,9 +3,9 @@
 **"すべての企業に自社開発。多重請負構造を、終わらせる。"**
 
 [![GitHub Organization](https://img.shields.io/badge/GitHub-agiletec--inc-181717?logo=github)](https://github.com/agiletec-inc)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/agiletec-inc/.github/blob/main/LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/agiletec-inc/.github/blob/main/CONTRIBUTING.md)
-[![Website](https://img.shields.io/badge/Website-agiletec.net-blue)](https://agiletec.net)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Website](https://img.shields.io/badge/Website-agiletec.jp-blue)](https://agiletec.jp)
 
 ---
 
@@ -17,7 +17,7 @@
 私たちは、AI・自動化による**伴走型開発**で、
 企業が「自ら作る力」を取り戻す支援をするテックカンパニーです。
 
-👉 **詳しくは [VISION](https://github.com/agiletec-inc/.github/blob/main/VISION.md) をお読みください**
+👉 **詳しくは [VISION.md](./VISION.md) をお読みください**
 
 ---
 
@@ -27,8 +27,7 @@
 |---------|-------------|------------|--------|
 | **[AIris Suite](https://airis.technology)** | AI電話・FAX・ストレージ自動化システム | Next.js + Supabase + Twilio | 🟢 Production |
 | **[AIRIS MCP Gateway](https://github.com/agiletec-inc/airis-mcp-gateway)** | 高速LLMゲートウェイ（トークン90%削減） | TypeScript + FastMCP | 🟢 Production |
-| **[Neural](https://github.com/agiletec-inc/neural)** | ローカルAI翻訳ツール（Ollama + Qwen2.5） | Rust + Tauri + React | 🟢 Production |
-| **[MindBase](https://github.com/agiletec-inc/mindbase)** | Python知識ベース管理システム | Python | 🟡 Beta |
+| **[FocusToday](https://github.com/agiletec-inc/focustoday)** | AIタスク管理・集中力最大化ツール | Next.js + Claude API | 🟡 Beta |
 
 ---
 
@@ -44,7 +43,7 @@
 ## 🤝 Contributing
 
 We welcome contributions!
-Please read [CONTRIBUTING.md](https://github.com/agiletec-inc/.github/blob/main/CONTRIBUTING.md) for details.
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ---
 
@@ -62,23 +61,26 @@ If our open-source projects help you, consider supporting us:
 - 🌍 Help us eliminate multi-tier contracting structures
 - 💡 Get early access to new features and products
 
-**Enterprise Support**: For commercial support, consulting, or custom development, [contact us](mailto:hello@agiletec.net)
+**Enterprise Support**: For commercial support, consulting, or custom development, [contact us](mailto:hello@agiletec.jp)
 
 ---
 
 ## 📖 Documentation
 
-- **[VISION.md](https://github.com/agiletec-inc/.github/blob/main/VISION.md)** - 理念・背景・戦略の詳細
-- [CODE_OF_CONDUCT.md](https://github.com/agiletec-inc/.github/blob/main/CODE_OF_CONDUCT.md) - 行動規範
-- [SECURITY.md](https://github.com/agiletec-inc/.github/blob/main/SECURITY.md) - セキュリティポリシー
+- **[VISION.md](https://github.com/agiletec-inc/.github/blob/master/VISION.md)** - 理念・背景・戦略の詳細
+- [PROJECTS.md](https://github.com/agiletec-inc/.github/blob/master/PROJECTS.md) - プロジェクト一覧
+- [CONTRIBUTING.md](https://github.com/agiletec-inc/.github/blob/master/CONTRIBUTING.md) - 貢献ガイドライン
+- [CODE_OF_CONDUCT.md](https://github.com/agiletec-inc/.github/blob/master/CODE_OF_CONDUCT.md) - 行動規範
+- [SECURITY.md](https://github.com/agiletec-inc/.github/blob/master/SECURITY.md) - セキュリティポリシー
+- [CHANGELOG.md](https://github.com/agiletec-inc/.github/blob/master/CHANGELOG.md) - 変更履歴
 
 ---
 
 ## 🌐 Connect With Us
 
-- 🌍 **Website**: [agiletec.net](https://agiletec.net)
+- 🌍 **Website**: [agiletec.jp](https://agiletec.jp)
 - 💼 **GitHub**: [@agiletec-inc](https://github.com/agiletec-inc)
-- 📧 **Email**: [hello@agiletec.net](mailto:hello@agiletec.net)
+- 📧 **Email**: [hello@agiletec.jp](mailto:hello@agiletec.jp)
 - 🐦 **Twitter**: [@agiletec_inc](https://twitter.com/agiletec_inc)
 
 ---
