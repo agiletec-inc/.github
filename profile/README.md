@@ -61,7 +61,7 @@ If our open-source projects help you, consider supporting us:
 - 🌍 Help us eliminate multi-tier contracting structures
 - 💡 Get early access to new features and products
 
-**Enterprise Support**: For commercial support, consulting, or custom development, [contact us](mailto:hello@agiletec.jp)
+**Enterprise Support**: For commercial support, consulting, or custom development, [contact us](mailto:hello@agiletec.net)
 
 ---
 
