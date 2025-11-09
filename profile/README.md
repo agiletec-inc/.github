@@ -7,7 +7,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 [![Website](https://img.shields.io/badge/Website-agiletec.net-blue)](https://agiletec.net)
 
-**日本語**: 詳しくは [agiletec.net](https://agiletec.net) をご覧ください
+**日本語**: コーポレートサイトは [agiletec.net](https://agiletec.net) をご覧ください
 
 ---
 
