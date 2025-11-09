@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is Agiletec Inc.'s **organization profile repository** - a documentation-only repository containing the company's vision, project portfolio, and policies. There is **no source code** in this repository.
 
-**Primary Language**: Japanese with English technical terms
+**Primary Language**: English (all documents translated to English as of 2025-11-09)
 
 ## Repository Purpose
 
@@ -20,30 +20,43 @@ This repository serves as:
 
 Read documents in this order to understand the organization:
 
-1. **profile/README.md** - Public GitHub profile introduction
-2. **VISION.md** - Complete company philosophy (9,867 bytes)
-   - Mission: "多重請負構造を撲滅する" (Eliminate multi-tier subcontracting)
-   - Vision: "すべての企業に自社開発" (In-house development for all companies)
+1. **profile/README.md** - Public GitHub profile introduction with links to all 9 OSS repositories
+2. **VISION.md** - Complete company philosophy
+   - Mission: Eliminate the multi-tier subcontracting structure
+   - Vision: In-house development for every company
    - Core values: Transparency, Empowerment, Craftsmanship, Agility
 3. **PROJECTS.md** - Product portfolio and tech stacks
 4. **CONTRIBUTING.md** - Contribution guidelines and code standards
-5. **SECURITY.md** - Security policy and vulnerability reporting
+5. **CODE_OF_CONDUCT.md** - Community standards
+6. **SECURITY.md** - Security policy and vulnerability reporting
+7. **CHANGELOG.md** - Organizational changelog
 
-## Actual Development Projects (External)
+## Open Source Projects (9 Repositories)
 
-Source code lives in separate repositories:
+### AI & LLM Tools
+- **airis-mcp-gateway** - MCP gateway (90% token reduction) - Production, 32 stars
+- **superagent** - Claude Code enhancement framework - Active Development
+- **mindbase** - AI conversation knowledge management - Active Development
+- **neural** - Local translation tool - Beta
 
-- **Agiletec Platform** - Private Turborepo monorepo (Next.js 15, React 19, Supabase, FastAPI)
-- **AIRIS MCP Gateway** - github.com/agiletec-inc/airis-mcp-gateway (Production, MIT License)
-- **FocusToday** - github.com/agiletec-inc/focustoday (Beta)
-- **AIris Suite** - Private (In development)
+### Developer Tools
+- **selfhosted-supabase-mcp** - Supabase MCP server - Production
+- **cmd-ime** - macOS input method switcher - Beta
+
+### Distribution
+- **homebrew-tap** - Official Homebrew tap - Active
+- **homebrew-mindbase** - MindBase Homebrew tap - Active
+
+### Organization
+- **.github** - This repository (organization profile and community health)
 
 ## Documentation Standards
 
 ### Language Convention
-- **Primary**: Japanese for narrative and explanations
-- **Technical Terms**: English is acceptable (e.g., "Turborepo", "Docker", "API")
-- **Code Examples**: English comments preferred for code standards
+- **Primary**: English for all documentation
+- **Technical Terms**: Standard English technical terminology
+- **Japanese Context**: Japanese business context explained in English (e.g., "multi-tier subcontracting structure" referring to Japan's IT industry)
+- **Code Examples**: English comments
 
 ### Formatting
 - Use emoji section headers (🎯, 🚀, 💡, etc.)
@@ -86,11 +99,11 @@ When editing documentation, maintain alignment with core philosophy:
 
 **Market Position**: Companion-style development for Japanese SMEs (10-500 employees)
 
-**Approach**: "伴走型開発" (Companion-style development) - collaborative development with technology transfer
+**Mission**: Eliminate Japan's multi-tier IT subcontracting structure through technology transfer and in-house development support
 
 ## Security
 
-For security vulnerabilities: **security@agiletec.inc** (in preparation)
+For security vulnerabilities: **security@agiletec.net**
 
 Do NOT create public issues for security concerns.
 
@@ -106,10 +119,19 @@ These files reduce token usage by 94% - reference them instead of re-reading all
 
 - **Main Branch**: master
 - **Branch Naming**: `feature/description`, `fix/description`, `docs/description`
-- **Recent Focus**: Documentation synchronization and branding updates
+- **Recent Updates**: All documentation translated to English (2025-11-09)
 
 ## Contact
 
-- **Email**: contact@agiletec.inc (in preparation)
-- **X (Twitter)**: @AgiletecInc (in preparation)
+- **Website**: https://agiletec.net (Japanese corporate site)
+- **Email**: hello@agiletec.net
+- **X (Twitter)**: @agiletec_inc
 - **GitHub**: Organization discussions for each project
+
+## Important Notes for Claude Code
+
+- This is a **documentation-only repository** - no build commands, tests, or source code
+- All documents are now in **English** (updated 2025-11-09)
+- Japanese corporate site (agiletec.net) provides Japanese-language business information
+- Actual development happens in separate repositories listed in profile/README.md
+- When making changes, maintain consistency with the organization's mission to eliminate multi-tier subcontracting structures
