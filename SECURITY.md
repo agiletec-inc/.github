@@ -2,127 +2,133 @@
 
 ## 🛡️ Agiletec Inc. Security Commitment
 
-私たちは、ユーザーとコミュニティのセキュリティを最優先事項としています。
+We prioritize the security of our users and community above all else.
 
-**Philosophy**: 透明性と責任あるディスクロージャー
+**Philosophy**: Transparency and responsible disclosure
 
 ---
 
 ## 🔍 Supported Versions
 
-セキュリティアップデートを提供しているバージョン：
+Versions receiving security updates:
 
 | Project | Version | Supported |
 |---------|---------|-----------|
 | AIRIS MCP Gateway | 1.x.x | ✅ |
-| Focus | 0.x.x (Beta) | ✅ |
-| SuperClaude Framework | 1.x.x | ✅ |
+| mindbase | 0.x.x (Beta) | ✅ |
+| superagent | 1.x.x | ✅ |
+| neural | 0.x.x (Beta) | ✅ |
+| selfhosted-supabase-mcp | 1.x.x | ✅ |
+| cmd-ime | 0.x.x (Beta) | ✅ |
 
 ---
 
 ## 🚨 Reporting a Vulnerability
 
-### 報告方法
+### How to Report
 
-**重要**: セキュリティ脆弱性を公開Issueで報告しないでください。
+**Important**: Do not report security vulnerabilities through public issues.
 
-**連絡先**:
-- 📧 **Email**: security@agiletec.inc (準備中)
-- 🔒 **暗号化**: PGP Key available on request
+**Contact**:
+- 📧 **Email**: security@agiletec.net
+- 🔒 **Encryption**: PGP Key available on request
 
-**報告内容**:
-1. 脆弱性の詳細な説明
-2. 影響を受けるバージョン
-3. 再現手順（PoC）
-4. 潜在的な影響範囲
-5. 可能であれば修正案
+**Report Contents**:
+1. Detailed description of the vulnerability
+2. Affected versions
+3. Reproduction steps (PoC)
+4. Potential impact scope
+5. Proposed fix (if available)
 
 ---
 
-### 対応プロセス
+### Response Process
 
-**タイムライン**:
+**Timeline**:
 
-1. **受理** (24時間以内)
-   - 報告を確認し、受理通知を送信
+1. **Acknowledgment** (within 24 hours)
+   - Confirm receipt of report and send acknowledgment
 
-2. **初期評価** (3営業日以内)
-   - 脆弱性の深刻度を評価（CVSS v3.1）
-   - 影響範囲の調査
+2. **Initial Assessment** (within 3 business days)
+   - Evaluate vulnerability severity (CVSS v3.1)
+   - Investigate impact scope
 
-3. **修正開発** (深刻度により)
-   - Critical: 1週間以内
-   - High: 2週間以内
-   - Medium: 1ヶ月以内
-   - Low: 次回リリース
+3. **Fix Development** (based on severity)
+   - Critical: within 1 week
+   - High: within 2 weeks
+   - Medium: within 1 month
+   - Low: next release
 
-4. **パッチリリース**
-   - セキュリティパッチのリリース
-   - CVE番号の取得（必要に応じて）
+4. **Patch Release**
+   - Release security patch
+   - Obtain CVE number (if necessary)
 
-5. **公開** (パッチリリース後90日)
-   - 脆弱性の詳細公開
-   - 報告者への謝辞
+5. **Disclosure** (90 days after patch release)
+   - Publish vulnerability details
+   - Acknowledge reporter
 
 ---
 
 ## 🏆 Vulnerability Rewards
 
-### 報奨金プログラム
+### Bounty Program
 
-**対象プロジェクト**:
+**Target Projects**:
 - AIRIS MCP Gateway
-- Focus
-- SuperClaude Framework
-- Agiletec Platform（非公開プロダクト）
+- mindbase
+- superagent
+- neural
+- selfhosted-supabase-mcp
+- cmd-ime
+- Agiletec Platform (private products)
 
-**報奨金額** (現在検討中):
+**Bounty Amounts** (under consideration):
 - **Critical**: $500 - $2,000
 - **High**: $200 - $500
 - **Medium**: $50 - $200
-- **Low**: 謝辞のみ
+- **Low**: Acknowledgment only
 
-**除外対象**:
-- サードパーティライブラリの既知の脆弱性
-- 社会工学的攻撃
-- 物理的アクセスを必要とする攻撃
-- DoS/DDoS攻撃
+**Excluded**:
+- Known vulnerabilities in third-party libraries
+- Social engineering attacks
+- Attacks requiring physical access
+- DoS/DDoS attacks
 
 ---
 
 ## 🔒 Security Best Practices
 
-### 開発時
+### During Development
 
-**秘密情報管理**:
-- ✅ Infisical等のSecret Managerを使用
-- ❌ `.env`ファイルをGitにコミットしない
-- ❌ APIキーをコードにハードコードしない
+**Secret Management**:
+- ✅ Use secret managers like Infisical
+- ❌ Don't commit `.env` files to Git
+- ❌ Don't hardcode API keys in code
 
-**依存関係管理**:
-- `npm audit`または`pnpm audit`を定期実行
-- Dependabotを有効化
-- 定期的なライブラリ更新
+**Dependency Management**:
+- Run `npm audit` or `pnpm audit` regularly
+- Enable Dependabot
+- Regular library updates
 
-**認証・認可**:
-- JWT token有効期限を設定
-- CSRF保護を実装
-- Rate limitingを導入
+**Authentication & Authorization**:
+- Set JWT token expiration
+- Implement CSRF protection
+- Introduce rate limiting
 
 ---
 
-### デプロイ時
+### During Deployment
 
-**インフラセキュリティ**:
-- ✅ HTTPS/TLS強制
-- ✅ 最小権限の原則（Least Privilege）
-- ✅ ネットワーク分離（Docker networks）
-- ✅ 定期的なセキュリティパッチ適用
+**Infrastructure Security**:
+- ✅ Enforce HTTPS/TLS
+- ✅ Principle of Least Privilege
+- ✅ Network isolation (Docker networks)
+- ✅ Regular security patch application
 
-**データ保護**:
-- データベース暗号化（at-rest, in-transit）
-- Row-Level Security（RLS）による多重テナント分離
-- バックアップ暗号化
+**Data Protection**:
+- Database encryption (at-rest, in-transit)
+- Row-Level Security (RLS) for multi-tenant isolation
+- Backup encryption
 
 ---
 
@@ -139,7 +145,7 @@
 
 ### Standards
 
-私たちは以下のセキュリティ標準に準拠するよう努めています：
+We strive to comply with the following security standards:
 
 - **OWASP Top 10** (Web Application Security)
 - **CWE Top 25** (Common Weakness Enumeration)
@@ -147,21 +153,21 @@
 
 ### Data Protection
 
-- **GDPR準拠** (EU顧客向け)
-- **個人情報保護法準拠** (日本国内)
-- データ最小化原則
+- **GDPR Compliance** (for EU customers)
+- **Japan Personal Information Protection Act Compliance**
+- Data minimization principle
 
 ---
 
 ## 📚 Security Resources
 
-### 学習資料
+### Learning Materials
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Supabase Security Best Practices](https://supabase.com/docs/guides/auth)
 - [Docker Security](https://docs.docker.com/engine/security/)
 
-### ツール
+### Tools
 
 - **Static Analysis**: ESLint security plugins
 - **Dependency Scanning**: Snyk, npm audit
@@ -172,23 +178,23 @@
 
 ## 🙏 Acknowledgments
 
-セキュリティ研究者の方々に感謝します：
+We thank security researchers:
 
-- (報告者名 - 脆弱性公開後に追加)
+- (Researcher names - to be added after vulnerability disclosure)
 
 ---
 
 ## 📞 Contact
 
-セキュリティに関する一般的な質問：
+For general security questions:
 
-- 📧 **Email**: security@agiletec.inc (準備中)
-- 🐙 **GitHub Security Advisory**: 各プロジェクトのSecurity tab
+- 📧 **Email**: security@agiletec.net
+- 🐙 **GitHub Security Advisory**: Security tab of each project
 
 ---
 
 **Security is a continuous journey, not a destination.**
 
-私たちは、安全で信頼できるソフトウェアを提供するために日々努力しています。
+We strive daily to provide safe and reliable software.
 
 — Agiletec Inc. Security Team

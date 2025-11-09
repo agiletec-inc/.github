@@ -2,302 +2,290 @@
 
 **Established**: 2025
 **Founder**: Kazuki Nakai
-**Corporate Philosophy**: 多重請負構造の撲滅と自社開発力の再生
+**Corporate Philosophy**: Eliminating multi-tier subcontracting and reviving in-house development capabilities
 
 ---
 
 ## 🎯 Our Vision
 
-**すべての企業に自社開発。**
+**In-house development for every company.**
 
-私たちアジャイルテクノロジーは「すべての企業に自社開発」をビジョンに掲げ、
-すべてのお客様の課題ごとに最適解を共に考え、
-柔軟かつ低コストでのDXを伴走型で実現するプロフェッショナルカンパニーです。
+Agiletec Inc. upholds the vision of "in-house development for every company." We are a professional company that collaborates with clients to find optimal solutions for each challenge, delivering flexible and cost-effective digital transformation through our companion-style development approach.
 
 ---
 
 ## 🚀 Our Mission
 
-**多重請負構造を撲滅する。**
+**Eliminate the multi-tier subcontracting structure.**
 
-IT・DX・システム開発において、「丸投げ」が通用する時代は、もう終わりました。
-私たちは、企業も個人も「自ら学習し、作れる力」を取り戻す支援を通じて、
-日本の開発構造そのものを再設計していきます。
+The era of "outsourcing everything" in IT, DX, and system development is over. We redesign Japan's development structure itself by helping both companies and individuals regain their ability to learn and build.
 
 ---
 
 ## 💡 Why We Exist
 
-### 問題の本質：多重請負構造
+### The Root Problem: Multi-tier Subcontracting Structure
 
-日本のIT業界には、構造的な非効率が根付いています：
+Japan's IT industry is plagued by structural inefficiencies:
 
 ```
-元請け（大手SIer）
-  ↓ 中抜き30%
-1次請け
-  ↓ 中抜き20%
-2次請け
-  ↓ 中抜き15%
-3次請け（実装者）
+Prime Contractor (Major SI Companies)
+  ↓ 30% markup
+First-tier Subcontractor
+  ↓ 20% markup
+Second-tier Subcontractor
+  ↓ 15% markup
+Third-tier Subcontractor (Actual Developers)
 ```
 
-**結果**:
-- 開発費の65%が中間マージンで消える
-- 実装者に届くのは予算の35%
-- 品質低下、納期遅延、技術的負債の蓄積
-- 企業は「自社で作る力」を失い、永続的に依存
+**Results**:
+- 65% of development budgets disappear in intermediary markups
+- Only 35% of the budget reaches actual developers
+- Quality degradation, deadline delays, accumulation of technical debt
+- Companies lose their ability to build in-house, creating perpetual dependency
 
-**私たちが変えるべき現実**:
-- 企業が「作れない」から外注する → 外注するから「作れなくなる」悪循環
-- 下請け構造が「学習機会」を奪う → 企業も個人も成長できない
-- 丸投げ文化が「責任の所在」を曖昧にする → 誰も本質的な改善をしない
+**The Reality We Must Change**:
+- Companies can't build → outsource → lose the ability to build (vicious cycle)
+- Subcontracting structures rob "learning opportunities" → neither companies nor individuals can grow
+- "Outsourcing culture" obscures "accountability" → no one makes fundamental improvements
 
 ---
 
 ## 🧭 Our Philosophy
 
-### 1. Transparency（透明性）
-**構造を隠さない。**
+### 1. Transparency
+**Don't hide the structure.**
 
-開発プロセス、コスト、技術的判断——全てを可視化します。
-ブラックボックス化された「丸投げ構造」を排除し、
-お客様が「何が起きているか」を常に理解できる状態を作ります。
+We make everything visible: development processes, costs, and technical decisions. We eliminate the black-boxed "outsourcing structure" and create a state where clients always understand "what's happening."
 
-### 2. Empowerment（自立支援）
-**依存をなくす。**
+### 2. Empowerment
+**Eliminate dependency.**
 
-「作ってあげる」のではなく、「作れるようにする」支援を提供します。
-技術移転、教育、伴走型開発を通じて、
-企業が自らの手で事業を進化させられる力を育てます。
+We don't just "build for you" - we "enable you to build." Through technology transfer, education, and companion-style development, we cultivate the power for companies to evolve their business with their own hands.
 
-### 3. Craftsmanship（職人主義）
-**作る力を尊ぶ。**
+### 3. Craftsmanship
+**Honor the power to create.**
 
-技術者は「工数を売る労働者」ではなく、「価値を創造する職人」です。
-私たちは、職人としての誇りと技術力を大切にし、
-「作る喜び」を企業と共有します。
+Engineers are not "laborers selling man-hours" but "craftsmen creating value." We cherish pride and technical skills as craftsmen, sharing the "joy of creation" with companies.
 
-### 4. Agility（俊敏性）
-**変化を恐れず適応する。**
+### 4. Agility
+**Adapt to change without fear.**
 
-完璧な計画よりも、素早い試行錯誤。
-固定された設計よりも、進化する設計。
-アジャイル思想に基づき、変化を力に変えます。
+Quick trial and error over perfect plans. Evolving design over fixed design. Based on agile philosophy, we turn change into strength.
 
 ---
 
-## 🌍 Why Now - なぜ今この戦いが必要なのか
+## 🌍 Why Now - Why This Battle Is Necessary
 
-### 社会的背景
+### Social Context
 
-#### 1. 労働人口の減少
-- 2030年までに644万人の労働力不足（経産省）
-- IT人材は2030年に79万人不足
-- 「人手不足だから外注」が通用しなくなる時代
+#### 1. Declining Labor Population
+- 6.44 million worker shortage by 2030 (METI)
+- 790,000 IT talent shortage by 2030
+- The era when "outsource because of labor shortage" no longer works
 
-#### 2. AI・自動化技術の成熟
-- ChatGPT、Claude、GitHub Copilot——開発生産性が10倍に
-- ノーコード・ローコードの進化
-- 「作れない」言い訳が成立しなくなった
+#### 2. Maturation of AI and Automation Technology
+- ChatGPT, Claude, GitHub Copilot - 10x productivity increase
+- Evolution of no-code and low-code platforms
+- The excuse "we can't build" no longer holds
 
-#### 3. DXの本質的理解の広がり
-- DX = デジタル化ではなく、「変革」
-- 外注では変革できない（内製化なしに真のDXはない）
-- 経営層の意識変化：「自社で持つべき技術」の再定義
+#### 3. Spreading Understanding of True DX
+- DX = transformation, not just digitalization
+- Outsourcing can't achieve transformation (no true DX without in-house development)
+- Management mindset shift: redefining "technologies we should own"
 
-#### 4. 中小企業のコスト構造改革ニーズ
-- 大手依存では利益率が上がらない
-- 自社開発による「内製化コスト削減」の成功事例増加
-- クラウド・SaaSの普及による初期投資ハードルの低下
+#### 4. Cost Structure Reform Needs in SMEs
+- Dependence on major vendors doesn't improve profit margins
+- Increasing success stories of "in-house cost reduction" through internal development
+- Lower initial investment barriers due to cloud and SaaS proliferation
 
-### 市場機会
+### Market Opportunity
 
-- **ターゲット**: 従業員10〜500名の中小・中堅企業
-- **課題**: 「作りたいけど作れない」「外注は高すぎる」「自社に技術がない」
-- **解決**: 伴走型開発 + 技術移転 + 低コストDX
-
----
-
-## 🏗️ How We Do It - 実行戦略
-
-### 1. 伴走型開発
-**「一緒に作る」アプローチ**
-
-従来の受託開発：
-```
-企画 → 発注 → 開発（ブラックボックス）→ 納品 → サポート終了
-```
-
-私たちの伴走型開発：
-```
-企画（一緒に）→ プロトタイピング（一緒に）→ 開発（透明）→ 運用（一緒に）→ 改善（継続）
-```
-
-**特徴**:
-- お客様も開発プロセスに参加
-- 技術的判断をリアルタイムで共有
-- 「作り方」も学べる構造
-
-### 2. 技術移転
-**「作れる力」を育てる**
-
-- 開発と並行してドキュメント作成
-- コードレビューで技術的背景を解説
-- 社内エンジニア育成プログラム
-- 運用・保守の完全移管
-
-### 3. 柔軟な価格設定
-**中小企業でも導入可能なコスト**
-
-- 固定費ではなく成果連動型も選択可能
-- MVP（最小限の機能）から段階的拡張
-- クラウド・SaaS活用で初期投資を最小化
-
-### 4. オープンソース活用
-**車輪の再発明をしない**
-
-- 既存OSSを最大限活用
-- 独自開発は本当に必要な部分のみ
-- コミュニティ貢献を通じた技術力向上
+- **Target**: SMEs with 10-500 employees
+- **Pain Points**: "Want to build but can't," "Outsourcing too expensive," "No internal tech capability"
+- **Solution**: Companion-style development + technology transfer + low-cost DX
 
 ---
 
-## 🌟 Our Products - 思想の具現化
+## 🏗️ How We Do It - Execution Strategy
 
-Agiletec Inc. の全プロダクトは、「多重請負構造撲滅」という理念の延長線上にあります。
+### 1. Companion-style Development
+**"Building together" approach**
 
-### 1. AIris（AI電話代行システム）
-**Mission**: 電話業務の構造改革
-
-従来の電話代行サービス：
+Traditional outsourced development:
 ```
-企業 → 電話代行会社 → オペレーター（派遣・下請け）
+Planning → Order → Development (Black Box) → Delivery → Support Ends
 ```
 
-AIris：
+Our companion-style development:
 ```
-企業 → AIris（自社システム）→ 完全自動化
-```
-
-**思想との接続**:
-- 「丸投げ依存」の撲滅 → 自社でAIを持つ
-- 中間マージンの排除 → 直接AIを導入
-- 透明性 → 全通話記録・分析を自社管理
-
-### 2. AIRIS MCP Gateway（開発ツール）
-**Mission**: 開発環境の構造改革
-
-従来のMCP：
-```
-開発者 → エディタベンダーの設計 → 非効率な構造を受け入れる
+Planning (Together) → Prototyping (Together) → Development (Transparent) → Operations (Together) → Improvement (Continuous)
 ```
 
-AIRIS MCP Gateway：
-```
-開発者 → Gateway（自社制御）→ 効率的な環境
-```
+**Features**:
+- Clients participate in the development process
+- Technical decisions shared in real-time
+- Structure that enables learning "how to build"
 
-**思想との接続**:
-- ベンダー依存の排除 → 開発者が環境をコントロール
-- トークン爆発の解決 → 無駄な待ち時間の撲滅
-- オープンソース → 誰でも改善・貢献可能
+### 2. Technology Transfer
+**Cultivate the "power to build"**
 
-### 3. Focus（集中力最大化ツール）
-**Mission**: 個人の生産性改革
+- Create documentation parallel to development
+- Explain technical background during code reviews
+- Internal engineer training programs
+- Complete handover of operations and maintenance
 
-従来の時間管理：
-```
-個人 → タスク管理ツール → 外部依存
-```
+### 3. Flexible Pricing
+**Affordable costs even for SMEs**
 
-Focus：
-```
-個人 → Focus（自己制御）→ 自律的な集中
-```
+- Performance-based options instead of fixed fees
+- Gradual expansion from MVP (minimum viable features)
+- Minimize initial investment through cloud and SaaS utilization
 
-**思想との接続**:
-- 外部ツール依存の排除 → 自分で時間をコントロール
-- シンプルさの追求 → 複雑な機能の排除
-- 職人主義 → 自分の時間は自分で守る
+### 4. Open Source Utilization
+**Don't reinvent the wheel**
+
+- Maximize use of existing OSS
+- Custom development only where truly necessary
+- Improve technical skills through community contribution
 
 ---
 
-## 📊 Success Metrics - 成功指標
+## 🌟 Our Products - Embodiment of Philosophy
 
-### 企業レベル
-- **5年目標**: 100社の内製化支援
-- **コスト削減**: 平均50%以上の開発コスト削減
-- **技術移転**: 80%以上の企業が自社運用可能に
+All Agiletec Inc. products exist as extensions of our mission to "eliminate multi-tier subcontracting structures."
 
-### 社会レベル
-- **構造改革**: 多重請負構造の認知向上と実例の蓄積
-- **人材育成**: 1,000名以上の企業内エンジニア育成
-- **エコシステム**: オープンソースコミュニティの形成
+### 1. AIris (AI Phone Agency System)
+**Mission**: Structural reform of phone operations
 
-### プロダクトレベル
-- **AIris**: 1,000社導入（電話業務自動化）
-- **MCP Gateway**: 10,000開発者利用（開発効率化）
-- **Focus**: 個人生産性向上の標準ツールへ
+Traditional phone agency services:
+```
+Company → Phone Agency → Operators (Dispatched/Subcontracted)
+```
+
+AIris:
+```
+Company → AIris (In-house System) → Full Automation
+```
+
+**Connection to Philosophy**:
+- Eliminate "outsourcing dependency" → own AI in-house
+- Remove intermediary margins → direct AI implementation
+- Transparency → manage all call records and analysis in-house
+
+### 2. AIRIS MCP Gateway (Development Tool)
+**Mission**: Structural reform of development environments
+
+Traditional MCP:
+```
+Developer → Editor Vendor's Design → Accept Inefficient Structure
+```
+
+AIRIS MCP Gateway:
+```
+Developer → Gateway (Self-controlled) → Efficient Environment
+```
+
+**Connection to Philosophy**:
+- Eliminate vendor dependency → developers control their environment
+- Solve token explosion → eliminate wasteful wait times
+- Open source → anyone can improve and contribute
+
+### 3. Focus (Concentration Maximization Tool)
+**Mission**: Individual productivity reform
+
+Traditional time management:
+```
+Individual → Task Management Tool → External Dependency
+```
+
+Focus:
+```
+Individual → Focus (Self-control) → Autonomous Concentration
+```
+
+**Connection to Philosophy**:
+- Eliminate external tool dependency → control your own time
+- Pursuit of simplicity → eliminate complex features
+- Craftsmanship → protect your own time
 
 ---
 
-## 🎓 Our Values - 行動指針
+## 📊 Success Metrics
 
-### For Clients（お客様に対して）
-1. **Honesty（正直さ）**: できないことは「できない」と言う
-2. **Partnership（対等な関係）**: 発注者・受注者ではなく、共創者
-3. **Long-term Commitment（長期的視点）**: 一時的な売上より、継続的な成長
+### Company Level
+- **5-year Goal**: Support 100 companies in in-house development
+- **Cost Reduction**: Average 50%+ development cost reduction
+- **Technology Transfer**: 80%+ of companies capable of self-operation
 
-### For Engineers（エンジニアに対して）
-1. **Respect（敬意）**: 工数を売るのではなく、価値を創造する
-2. **Growth（成長）**: 学習機会と技術的挑戦を提供
-3. **Autonomy（自律性）**: 自分で判断し、責任を持つ
+### Social Level
+- **Structural Reform**: Raise awareness and accumulate examples of multi-tier subcontracting elimination
+- **Human Development**: Train 1,000+ in-house engineers
+- **Ecosystem**: Form open source communities
 
-### For Society（社会に対して）
-1. **Transparency（透明性）**: 知見をオープンに共有
-2. **Education（教育）**: 技術コミュニティへの貢献
-3. **Sustainability（持続可能性）**: 短期的利益より、長期的価値
-
----
-
-## 🔮 Vision 2030 - 5年後の姿
-
-### 目指す世界
-**「自社開発が当たり前の日本」**
-
-- 中小企業の80%が「作れる力」を持つ
-- 多重請負構造が「過去の遺物」として語られる
-- 技術者が「職人」として尊重される社会
-- AI・自動化が「人間の創造性」を解放する
-
-### Agiletec Inc. の位置
-- **伴走型開発のリーディングカンパニー**
-- **内製化支援の成功事例100社以上**
-- **オープンソースコミュニティの中心的存在**
-- **「自社開発を始めるならAgiletec」という認知**
+### Product Level
+- **AIris**: 1,000 company adoption (phone automation)
+- **MCP Gateway**: 10,000 developer users (development efficiency)
+- **Focus**: Become standard tool for individual productivity improvement
 
 ---
 
-## 🤝 Our Commitment - 私たちの約束
+## 🎓 Our Values - Action Guidelines
 
-1. **お客様が「作れる力」を持つまで、伴走します**
-2. **技術的判断を、常に透明にします**
-3. **短期的利益より、長期的信頼を優先します**
-4. **知見を、オープンに共有します**
-5. **多重請負構造を、絶対に作りません**
+### For Clients
+1. **Honesty**: Say "we can't" when we can't
+2. **Partnership**: Co-creators, not orderer-contractor
+3. **Long-term Commitment**: Continuous growth over temporary sales
+
+### For Engineers
+1. **Respect**: Create value, not sell man-hours
+2. **Growth**: Provide learning opportunities and technical challenges
+3. **Autonomy**: Make your own decisions and take responsibility
+
+### For Society
+1. **Transparency**: Share knowledge openly
+2. **Education**: Contribute to tech communities
+3. **Sustainability**: Long-term value over short-term profit
+
+---
+
+## 🔮 Vision 2030 - Five Years Ahead
+
+### The World We Aim For
+**"A Japan where in-house development is the norm"**
+
+- 80% of SMEs have "the power to build"
+- Multi-tier subcontracting structures spoken of as "relics of the past"
+- A society where engineers are respected as "craftsmen"
+- AI and automation "unleash human creativity"
+
+### Agiletec Inc.'s Position
+- **Leading company in companion-style development**
+- **100+ success cases in in-house development support**
+- **Central presence in open source communities**
+- **Recognition as "go to Agiletec to start in-house development"**
+
+---
+
+## 🤝 Our Commitment
+
+1. **We accompany you until you have the "power to build"**
+2. **We always make technical decisions transparent**
+3. **We prioritize long-term trust over short-term profit**
+4. **We share knowledge openly**
+5. **We absolutely will not create multi-tier subcontracting structures**
 
 ---
 
 ## 🔗 Related Documents
 
-- [README.md](./README.md) - プロジェクト概要
-- [products/airis/VISION.md](./products/airis/VISION.md) - AIris の思想
-- [AIRIS MCP Gateway/VISION.md](../airis-mcp-gateway/VISION.md) - Gateway の思想
+- [profile/README.md](./profile/README.md) - Organization overview
+- [PROJECTS.md](./PROJECTS.md) - Project portfolio
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
 
 ---
 
-**"すべての企業に自社開発。多重請負構造を、終わらせる。"**
+**"In-house development for every company. End the multi-tier subcontracting structure."**
 
 — Agiletec Inc.
 Founded 2025, Tokyo, Japan

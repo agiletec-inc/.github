@@ -2,9 +2,9 @@
 
 ## Our Pledge
 
-私たちAgiletec Inc.のコミュニティは、年齢、体格、障害の有無、民族性、性別、経験レベル、国籍、外見、人種、宗教、性的指向に関わらず、すべての人にハラスメントのない体験を提供することを誓います。
+The Agiletec Inc. community pledges to provide a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual orientation.
 
-**Our Mission**: 多重請負構造を撲滅し、すべての企業に自社開発力を。
+**Our Mission**: Eliminate multi-tier subcontracting structures and empower all companies with in-house development capabilities.
 
 ---
 
@@ -12,106 +12,114 @@
 
 ### ✅ Positive Behavior
 
-**歓迎される行動**:
-- 他者を尊重し、共感的な言葉遣い
-- 異なる意見や経験を尊重
-- 建設的なフィードバックの受け入れと提供
-- コミュニティ全体の利益を優先
-- 技術的卓越性と誠実さの追求
+**Welcomed behaviors**:
+- Respectful and empathetic language toward others
+- Respect for different opinions and experiences
+- Accepting and providing constructive feedback gracefully
+- Prioritizing the community's collective benefit
+- Pursuing technical excellence and integrity
 
-**私たちが大切にする価値**:
-- **Transparency（透明性）**: オープンで正直なコミュニケーション
-- **Empowerment（自立支援）**: 互いの成長を支援
-- **Craftsmanship（職人主義）**: 技術力と品質を尊重
-- **Collaboration（協働）**: 共創と相互支援
+**Values we cherish**:
+- **Transparency**: Open and honest communication
+- **Empowerment**: Support each other's growth
+- **Craftsmanship**: Respect technical skills and quality
+- **Collaboration**: Co-creation and mutual support
 
 ---
 
 ### ❌ Unacceptable Behavior
 
-**禁止される行動**:
-- 性的な言葉や画像の使用
-- トローリング、侮辱的コメント、個人攻撃
-- 公的または私的なハラスメント
-- 他人の個人情報の無断公開
-- 職業的に不適切と判断される行為
+**Prohibited behaviors**:
+- Use of sexualized language or imagery
+- Trolling, insulting comments, and personal attacks
+- Public or private harassment
+- Publishing others' private information without permission
+- Conduct deemed unprofessional
 
 ---
 
 ## Our Responsibilities
 
-### プロジェクトメンテナー
+### Project Maintainers
 
-メンテナーは、この行動規範の基準を明確にし、違反行為に対して適切な措置を取る責任があります。
+Maintainers are responsible for clarifying standards of this code of conduct and taking appropriate action in response to violations.
 
-**権限**:
-- 不適切なコメント、コミット、コード、Issue、その他の貢献を削除、編集、拒否
-- 一時的または恒久的に貢献者をコミュニティから除外
+**Authority**:
+- Remove, edit, or reject comments, commits, code, issues, and other contributions that are inappropriate
+- Temporarily or permanently exclude contributors from the community
 
 ---
 
 ## Scope
 
-この行動規範は以下に適用されます：
-- プロジェクトスペース（GitHub, Discussions, etc.）
-- 公的スペースでのプロジェクト代表時
-- オンライン・オフラインのコミュニティイベント
+This code of conduct applies to:
+- Project spaces (GitHub, Discussions, etc.)
+- Public spaces when representing the project
+- Online and offline community events
 
 ---
 
 ## Enforcement
 
-### 報告方法
+### How to Report
 
-ハラスメントや不適切な行動を目撃した場合：
+If you witness harassment or inappropriate behavior:
 
-📧 **conduct@agiletec.inc** (準備中)
+📧 **conduct@agiletec.net**
 
-**報告内容**:
-- 発生日時と場所
-- 関係者の名前
-- 行動の詳細
-- 証拠（スクリーンショット等）
+**Report Contents**:
+- Date, time, and location of incident
+- Names of individuals involved
+- Details of the behavior
+- Evidence (screenshots, etc.)
 
-すべての報告は機密として扱われます。
-
----
-
-### 対応プロセス
-
-1. **受理**: 24時間以内に受理確認
-2. **調査**: 3営業日以内に調査開始
-3. **判断**: 事実確認後、適切な措置を決定
-4. **通知**: 報告者と関係者に結果を通知
+All reports will be treated as confidential.
 
 ---
 
-### 措置の種類
+### Response Process
 
-**軽度の違反**:
-- 口頭または書面での警告
-- 一時的なコミュニケーション制限
+1. **Acknowledgment** (within 24 hours)
+   - Confirm receipt of report
 
-**中度の違反**:
-- 一時的な活動停止（1週間〜1ヶ月）
-- 特定のプロジェクトからの一時的な除外
+2. **Investigation** (within 3 business days)
+   - Assess severity of violation (CVSS v3.1)
+   - Investigate scope of impact
 
-**重度の違反**:
-- 恒久的なコミュニティからの除外
-- 法的措置（必要に応じて）
+3. **Decision**
+   - Determine appropriate measures after fact-finding
+
+4. **Notification**
+   - Notify reporter and involved parties of results
+
+---
+
+### Types of Measures
+
+**Minor Violations**:
+- Verbal or written warning
+- Temporary communication restrictions
+
+**Moderate Violations**:
+- Temporary activity suspension (1 week to 1 month)
+- Temporary exclusion from specific projects
+
+**Severe Violations**:
+- Permanent exclusion from the community
+- Legal action (if necessary)
 
 ---
 
 ## Philosophy
 
-私たちのコミュニティは、**技術的卓越性**と**人間性の尊重**の両立を目指しています。
+Our community aims to balance **technical excellence** with **respect for humanity**.
 
-### 技術とヒューマニティの融合
+###融合 of Technology and Humanity
 
-- **Honest Feedback**: 率直なフィードバックは成長の糧（ただし敬意を持って）
-- **Disagree and Commit**: 意見の相違は歓迎、しかし決定後は一致団結
-- **Assume Good Intent**: 悪意ではなく、善意を前提に
-- **High Standards, High Support**: 高い基準と手厚いサポートの両立
+- **Honest Feedback**: Candid feedback fuels growth (but with respect)
+- **Disagree and Commit**: Differences of opinion are welcome, but unite after decisions
+- **Assume Good Intent**: Assume good intentions, not malice
+- **High Standards, High Support**: Balance high standards with strong support
 
 ---
 
@@ -120,38 +128,38 @@
 ### ✅ Good Communication
 
 ```
-「このアプローチには懸念があります。
-理由1: パフォーマンス面で○○の問題
-理由2: セキュリティリスクが△△
-代替案として□□を提案します。」
+"I have concerns about this approach.
+Reason 1: Performance issue with XX
+Reason 2: Security risk of YY
+I propose ZZ as an alternative."
 ```
 
 ### ❌ Bad Communication
 
 ```
-「このコード、ひどいですね。
-こんなの書くなんて初心者ですか？」
+"This code is terrible.
+Are you a beginner writing stuff like this?"
 ```
 
 ---
 
 ## Attribution
 
-この行動規範は[Contributor Covenant](https://www.contributor-covenant.org/) version 2.1に基づいています。
+This code of conduct is based on [Contributor Covenant](https://www.contributor-covenant.org/) version 2.1.
 
-変更履歴は[こちら](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)。
+Change history available [here](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html).
 
 ---
 
 ## Contact
 
-質問や懸念がある場合：
+For questions or concerns:
 
-- **Email**: conduct@agiletec.inc (準備中)
-- **GitHub Discussions**: 各プロジェクトのDiscussions
+- **Email**: conduct@agiletec.net
+- **GitHub Discussions**: Each project's Discussions
 
 ---
 
-**私たちは、誰もが安全で生産的に貢献できるコミュニティを目指します。**
+**We aim for a community where everyone can contribute safely and productively.**
 
 — Agiletec Inc. Team

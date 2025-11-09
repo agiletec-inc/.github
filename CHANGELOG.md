@@ -9,10 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
-- Nothing
+- English translations for all organization documents
 
 ### Changed
-- Nothing
+- profile/README.md: Complete English rewrite with detailed OSS repository descriptions
+- VISION.md: Translated to English
+- PROJECTS.md: Translated to English with updated repository information
+- CONTRIBUTING.md: Translated to English with all 9 OSS projects listed
+- CODE_OF_CONDUCT.md: Translated to English
+- SECURITY.md: Translated to English
+- Domain references updated from agiletec.jp to agiletec.net
 
 ### Fixed
 - Nothing
@@ -33,18 +39,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - PROJECTS.md for project portfolio overview
 
 ### Philosophy
-- **Vision**: すべての企業に自社開発
-- **Mission**: 多重請負構造を撲滅する
+- **Vision**: In-house development for every company
+- **Mission**: Eliminate the multi-tier subcontracting structure
 - **Values**: Transparency, Empowerment, Craftsmanship, Agility
 
 ### Self-Developed Products
-- **Agiletec Platform** - Turborepoモノレポ統合開発基盤
-  - **AIris Suite** - AI電話・FAX・ストレージ（電話業務の構造改革）
-  - **FocusToday Suite** - タスク管理SaaS（個人と組織の生産性改革）
-- **AIRIS MCP Gateway** - 開発ツール（開発環境の構造改革、MIT License）
+- **Agiletec Platform** - Turborepo monorepo integrated development foundation
+  - **AIris Suite** - AI phone, FAX & storage (structural reform of phone operations)
+  - **FocusToday Suite** - Task management SaaS (individual and organizational productivity reform)
+- **AIRIS MCP Gateway** - Development tool (structural reform of development environments, MIT License)
 
 ### Open Source Contributions
-- **SuperClaude Framework** - AI開発フレームワーク（コントリビュート先）
+- **SuperClaude Framework** - AI development framework (contribution target)
 
 ---
 
@@ -79,5 +85,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-**Last Updated**: 2025-10-16
+**Last Updated**: 2025-11-09
 **Maintained By**: Agiletec Inc. Team

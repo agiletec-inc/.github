@@ -1,58 +1,62 @@
 # Contributing to Agiletec Inc.
 
-私たちAgiletec Inc.のビジョンに共感し、貢献していただきありがとうございます。
+Thank you for your interest in contributing to Agiletec Inc. and our vision.
 
 ## 🎯 Our Mission
 
-**多重請負構造を撲滅する。**
+**Eliminate the multi-tier subcontracting structure.**
 
-私たちは、日本のIT業界の構造的非効率を解決し、すべての企業が自社開発力を持つ未来を実現します。
+We solve structural inefficiencies in Japan's IT industry and realize a future where all companies have in-house development capabilities.
 
 ---
 
 ## 🤝 How to Contribute
 
-### 1. オープンソースプロジェクトへの貢献
+### 1. Contributing to Open Source Projects
 
-#### 自社開発プロジェクト
+#### Our Projects
 
-Agiletec Inc.が開発・メンテナンスしているオープンソースプロジェクト：
+Open source projects developed and maintained by Agiletec Inc.:
 
-- **[AIRIS MCP Gateway](https://github.com/agiletec-inc/airis-mcp-gateway)** - MCP統合ゲートウェイ
-- **[FocusToday](https://github.com/agiletec-inc/focustoday)** - タスク管理SaaS
+- **[AIRIS MCP Gateway](https://github.com/agiletec-inc/airis-mcp-gateway)** - MCP integrated gateway
+- **[mindbase](https://github.com/agiletec-inc/mindbase)** - AI conversation knowledge management
+- **[superagent](https://github.com/agiletec-inc/superagent)** - Claude Code enhancement framework
+- **[neural](https://github.com/agiletec-inc/neural)** - Local translation tool
+- **[selfhosted-supabase-mcp](https://github.com/agiletec-inc/selfhosted-supabase-mcp)** - Supabase MCP server
+- **[cmd-ime](https://github.com/agiletec-inc/cmd-ime)** - macOS input method switcher
 
-#### コントリビュート先
+#### Projects We Contribute To
 
-私たちが積極的に貢献しているオープンソースプロジェクト：
+Open source projects we actively contribute to:
 
-- **[SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)** - AI開発フレームワーク
+- **[SuperClaude Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)** - AI development framework
 
-各プロジェクトの`CONTRIBUTING.md`を参照してください。
-
----
-
-### 2. Issue報告
-
-バグ報告や機能提案は、各プロジェクトのIssueで受け付けています。
-
-**良いIssueの例**:
-- 再現手順が明確
-- 期待される動作と実際の動作の説明
-- 環境情報（OS, バージョン等）
+Please refer to each project's `CONTRIBUTING.md` for specific guidelines.
 
 ---
 
-### 3. Pull Request
+### 2. Issue Reporting
 
-**貢献の流れ**:
+Bug reports and feature requests are accepted through each project's Issues.
 
-1. **Fork**: プロジェクトをFork
-2. **Branch**: `feature/your-feature-name`ブランチを作成
-3. **Implement**: コード変更を実装
-4. **Test**: テストを追加・実行
-5. **Commit**: [Conventional Commits](https://www.conventionalcommits.org/)に従う
-6. **Push**: 自分のForkにPush
-7. **PR**: 本家リポジトリにPull Request作成
+**Good Issue Examples**:
+- Clear reproduction steps
+- Description of expected vs actual behavior
+- Environment information (OS, version, etc.)
+
+---
+
+### 3. Pull Requests
+
+**Contribution Flow**:
+
+1. **Fork**: Fork the project
+2. **Branch**: Create a `feature/your-feature-name` branch
+3. **Implement**: Implement code changes
+4. **Test**: Add and run tests
+5. **Commit**: Follow [Conventional Commits](https://www.conventionalcommits.org/)
+6. **Push**: Push to your fork
+7. **PR**: Create Pull Request to the original repository
 
 **Commit Message Format**:
 ```
@@ -74,106 +78,106 @@ refactor: simplify error handling logic
 - **KISS**: Keep It Simple, Stupid
 
 #### TypeScript/JavaScript
-- ESLint + Prettier設定に従う
-- 型定義は明示的に
-- コメントはWHYを説明（WHATではなく）
+- Follow ESLint + Prettier configuration
+- Explicit type definitions
+- Comments explain WHY, not WHAT
 
 #### Python
-- Black + Ruff設定に従う
-- Type hints必須（Python 3.12+）
-- Docstrings（Google Style）
+- Follow Black + Ruff configuration
+- Type hints required (Python 3.12+)
+- Docstrings (Google Style)
 
 ---
 
 ### 5. Documentation
 
-**必須ドキュメント**:
-- `README.md`: プロジェクト概要、インストール方法
-- `ARCHITECTURE.md`: 技術的アーキテクチャ（複雑なプロジェクトのみ）
-- `CHANGELOG.md`: バージョン履歴
-- Inline Comments: 複雑なロジックの説明
+**Required Documentation**:
+- `README.md`: Project overview, installation instructions
+- `ARCHITECTURE.md`: Technical architecture (complex projects only)
+- `CHANGELOG.md`: Version history
+- Inline Comments: Explain complex logic
 
-**ドキュメント原則**:
-- 日本語優先（技術用語は英語可）
-- 例を含める
-- 最新状態を保つ
+**Documentation Principles**:
+- English preferred (technical terms in English)
+- Include examples
+- Keep up to date
 
 ---
 
 ## 💡 Contribution Ideas
 
 ### Beginner-Friendly
-- ドキュメント誤字修正
-- サンプルコード追加
-- 翻訳（英語⇄日本語）
-- テストカバレッジ向上
+- Fix documentation typos
+- Add sample code
+- Translations (English ↔ Japanese)
+- Improve test coverage
 
 ### Intermediate
-- バグ修正
-- 新機能実装
-- パフォーマンス改善
-- リファクタリング
+- Bug fixes
+- New feature implementation
+- Performance improvements
+- Refactoring
 
 ### Advanced
-- アーキテクチャ改善
-- セキュリティ強化
-- スケーラビリティ対応
-- 新プロダクト提案
+- Architecture improvements
+- Security enhancements
+- Scalability improvements
+- New product proposals
 
 ---
 
 ## 🛡️ Security
 
-セキュリティ脆弱性を発見した場合は、**公開Issueを作成せず**、直接ご連絡ください：
+If you discover a security vulnerability, **do not create a public issue**. Please contact us directly:
 
-📧 **security@agiletec.inc** (準備中)
+📧 **security@agiletec.net**
 
-詳細は[SECURITY.md](./SECURITY.md)を参照してください。
+See [SECURITY.md](./SECURITY.md) for details.
 
 ---
 
 ## 📋 Code Review Process
 
-1. **自動チェック**: CI/CD（lint, test, build）が通ること
-2. **Code Review**: メンテナーが1-3営業日以内にレビュー
-3. **Feedback**: 修正依頼がある場合はコメント
-4. **Approval**: 承認後にマージ
+1. **Automated Checks**: CI/CD (lint, test, build) must pass
+2. **Code Review**: Maintainers review within 1-3 business days
+3. **Feedback**: Comments if changes are requested
+4. **Approval**: Merge after approval
 
-**レビュー基準**:
-- コードの品質
-- テストの網羅性
-- ドキュメントの明確さ
-- ビジョンとの整合性
+**Review Criteria**:
+- Code quality
+- Test coverage
+- Documentation clarity
+- Alignment with vision
 
 ---
 
 ## 🌟 Recognition
 
-貢献者は以下で認識されます：
-- プロジェクトの`CONTRIBUTORS.md`に記載
-- リリースノートで感謝の意を表明
-- 大きな貢献には特別な謝辞
+Contributors are recognized through:
+- Listed in project's `CONTRIBUTORS.md`
+- Acknowledged in release notes
+- Special thanks for significant contributions
 
 ---
 
 ## 🤔 Questions?
 
-不明点があれば、遠慮なくご連絡ください：
+If you have questions, feel free to reach out:
 
-- **GitHub Discussions**: 各プロジェクトのDiscussions
-- **Email**: contact@agiletec.inc (準備中)
-- **X (Twitter)**: [@AgiletecInc](https://twitter.com/AgiletecInc) (準備中)
+- **GitHub Discussions**: Each project's Discussions
+- **Email**: hello@agiletec.net
+- **X (Twitter)**: [@agiletec_inc](https://x.com/agiletec_inc)
 
 ---
 
 ## 📄 License
 
-貢献されたコードは、各プロジェクトのライセンス（通常はMIT License）に従います。
+Contributed code follows each project's license (typically MIT License).
 
 ---
 
-**ご協力ありがとうございます！**
+**Thank you for your cooperation!**
 
-「すべての企業に自社開発。」のビジョン実現に向けて、共に前進しましょう。
+Let's move forward together to realize our vision of "in-house development for every company."
 
 — Agiletec Inc. Team

@@ -1,37 +1,37 @@
 # Agiletec Inc. - Project Portfolio
 
-**Last Updated**: 2025-10-16
+**Last Updated**: 2025-11-09
 
 ---
 
 ## 🎯 Project Categories
 
-### 1. Self-Developed Products（自社開発プロダクト）
-私たちが設計・開発・メンテナンスを行っているプロダクト
+### 1. Self-Developed Products
+Products we design, develop, and maintain
 
-### 2. Open Source Contributions（コントリビュート先）
-私たちが積極的に貢献しているオープンソースプロジェクト
+### 2. Open Source Contributions
+Open source projects we actively contribute to
 
 ---
 
 ## 🌟 Self-Developed Products
 
-### Agiletec Platform - 統合開発基盤
+### Agiletec Platform - Integrated Development Foundation
 
 **Status**: 🚧 In Development
-**Repository**: Private (Turborepoモノレポ)
-**Mission**: 複数ビジネスアプリケーションの効率的開発
+**Repository**: Private (Turborepo monorepo)
+**Mission**: Efficient development of multiple business applications
 
-#### 概要
+#### Overview
 
-AIris Suite、FocusToday Suite等の複数プロダクトを単一基盤で開発・運用するためのTurborepoモノレポ。
+A Turborepo monorepo for developing and operating multiple products such as AIris Suite and FocusToday Suite on a single platform.
 
 #### Architecture
 
-- **Apps**: 10アプリケーション
-- **Libs**: 22共有ライブラリ（UI、Logger、Domain等）
+- **Apps**: 10 applications
+- **Libs**: 22 shared libraries (UI, Logger, Domain, etc.)
 - **Infrastructure**: Supabase (Self-Hosted), Kong Gateway, Traefik
-- **Multi-Tenancy**: Row-Level Security (RLS)による組織分離
+- **Multi-Tenancy**: Organization isolation via Row-Level Security (RLS)
 
 #### Technology Stack
 
@@ -43,98 +43,98 @@ AIris Suite、FocusToday Suite等の複数プロダクトを単一基盤で開�
 
 #### Benefits
 
-- **開発効率**: 共有ライブラリで3-5倍高速化
-- **運用コスト**: セルフホストで月次コスト70%削減
-- **品質**: 一貫したコード品質とアーキテクチャ
+- **Development Efficiency**: 3-5x faster with shared libraries
+- **Operational Cost**: 70% monthly cost reduction through self-hosting
+- **Quality**: Consistent code quality and architecture
 
 ---
 
-### AIris Suite - AI電話・FAX・ストレージ
+### AIris Suite - AI Phone, FAX & Storage
 
 **Status**: 🚧 In Development (Part of Agiletec Platform)
-**Mission**: 電話業務の構造改革
+**Mission**: Structural reform of phone operations
 
-#### 概要
+#### Overview
 
-従来の電話代行サービスの多重請負構造（企業 → 電話代行会社 → オペレーター派遣・下請け）を排除し、企業が直接AIで電話業務を完全自動化できるシステム。
+A system that eliminates the multi-tier subcontracting structure of traditional phone agency services (Company → Phone Agency → Dispatched/Subcontracted Operators), enabling companies to fully automate phone operations directly with AI.
 
 #### Applications
 
 | App | Description | Tech Stack |
 |-----|-------------|-----------|
-| **airis-dashboard** | 統合ダッシュボード | Next.js 15, React 19 |
-| **airis-landing** | マーケティングサイト | Next.js 15, Tailwind CSS |
-| **airis-evidence-script** | 音声文字起こし・NLP解析 | Next.js 15, Whisper API, GPT-4 |
-| **airis-auto-call** | AI自動架電システム | Next.js 15, GPT-4o Realtime, Twilio |
-| **airis-storage-smart** | 重複検出ストレージ | Python 3.12, Next.js 15 |
+| **airis-dashboard** | Integrated dashboard | Next.js 15, React 19 |
+| **airis-landing** | Marketing site | Next.js 15, Tailwind CSS |
+| **airis-evidence-script** | Voice transcription & NLP analysis | Next.js 15, Whisper API, GPT-4 |
+| **airis-auto-call** | AI auto-dialing system | Next.js 15, GPT-4o Realtime, Twilio |
+| **airis-storage-smart** | Deduplication storage | Python 3.12, Next.js 15 |
 
-#### 主要機能
+#### Key Features
 
-- 🤖 **AI音声対応**: GPT-4o Realtime API統合
-- 📞 **通話管理**: Twilio連携による着信・架電
-- 📝 **文字起こし**: Whisper API + NLP解析
-- 📊 **ダッシュボード**: 通話記録・分析・レポート
-- 📠 **FAX統合**: FAX送受信・OCR解析
+- 🤖 **AI Voice Response**: GPT-4o Realtime API integration
+- 📞 **Call Management**: Incoming/outgoing calls via Twilio
+- 📝 **Transcription**: Whisper API + NLP analysis
+- 📊 **Dashboard**: Call records, analysis, reports
+- 📠 **FAX Integration**: FAX send/receive, OCR analysis
 
 #### Target Metrics
 
-- **5年目標**: 1,000社導入
-- **コスト削減**: 従来の電話代行費用から70%削減
-- **稼働率**: 99.9% uptime
+- **5-year Goal**: 1,000 company deployments
+- **Cost Reduction**: 70% reduction from traditional phone agency costs
+- **Uptime**: 99.9%
 
 ---
 
-### FocusToday Suite - タスク管理SaaS
+### FocusToday Suite - Task Management SaaS
 
 **Status**: 🚧 In Development (Part of Agiletec Platform)
-**Mission**: 個人と組織の生産性改革
+**Mission**: Individual and organizational productivity reform
 
-#### 概要
+#### Overview
 
-複雑な外部ツール依存を排除し、シンプルで自律的な時間管理を実現するタスク管理SaaS。
+A task management SaaS that eliminates complex external tool dependencies and achieves simple, autonomous time management.
 
 #### Applications
 
 | App | Description | Tech Stack |
 |-----|-------------|-----------|
-| **focustoday** | Webアプリケーション | Next.js 15, React 19 |
-| **focustoday-api** | バックエンドAPI | FastAPI (Python 3.12) |
-| **focustoday-mobile** | モバイルアプリ | React Native, Expo |
+| **focustoday** | Web application | Next.js 15, React 19 |
+| **focustoday-api** | Backend API | FastAPI (Python 3.12) |
+| **focustoday-mobile** | Mobile app | React Native, Expo |
 
-#### 主要機能
+#### Key Features
 
-- 📋 **個人・チームタスク管理**: シンプルなタスク・プロジェクト管理
-- 🎯 **集中力最大化**: フォーカスモード、ポモドーロタイマー
-- 📱 **モバイルアプリ**: iOS/Android対応
-- 🔄 **リアルタイム同期**: チーム間でのタスク同期
-- 📊 **生産性分析**: 個人・チームの生産性可視化
+- 📋 **Personal & Team Task Management**: Simple task and project management
+- 🎯 **Concentration Maximization**: Focus mode, Pomodoro timer
+- 📱 **Mobile App**: iOS/Android support
+- 🔄 **Real-time Sync**: Task synchronization across teams
+- 📊 **Productivity Analysis**: Visualize individual and team productivity
 
 #### Target Metrics
 
-- **5年目標**: 個人・組織生産性向上の標準ツールへ
-- **生産性向上**: 平均30%以上のタスク完了率向上
-- **継続率**: 月次継続率80%以上
+- **5-year Goal**: Become standard tool for individual/organizational productivity improvement
+- **Productivity Improvement**: 30%+ average task completion rate improvement
+- **Retention Rate**: 80%+ monthly retention
 
 ---
 
-### AIRIS MCP Gateway - 開発ツール
+### AIRIS MCP Gateway - Development Tool
 
 **Status**: ✅ Production
 **Repository**: [agiletec-inc/airis-mcp-gateway](https://github.com/agiletec-inc/airis-mcp-gateway)
-**Mission**: 開発環境の構造改革
+**Mission**: Structural reform of development environments
 
-#### 概要
+#### Overview
 
-エディタベンダーの設計による非効率な構造を排除し、開発者が環境を完全にコントロールできるMCP（Model Context Protocol）統合ゲートウェイ。
+An integrated MCP (Model Context Protocol) gateway that eliminates inefficiencies from editor vendor designs, giving developers complete control over their environment.
 
-#### 主要機能
+#### Key Features
 
-- ⚡ **トークン最適化**: 並列処理により90%削減
-- 🔄 **統合管理**: 25+ MCPサーバーの一元管理
-- 🧠 **インテリジェントルーティング**: 最適なMCPサーバー自動選択
-- 🛡️ **エラーハンドリング**: 高度なエラー検知・リトライ機構
-- 📊 **モニタリング**: パフォーマンス・コスト分析
-- 🎨 **Settings UI**: サーバーON/OFF管理
+- ⚡ **Token Optimization**: 90% reduction through parallel processing
+- 🔄 **Integrated Management**: Centralized management of 25+ MCP servers
+- 🧠 **Intelligent Routing**: Automatic selection of optimal MCP servers
+- 🛡️ **Error Handling**: Advanced error detection and retry mechanisms
+- 📊 **Monitoring**: Performance and cost analysis
+- 🎨 **Settings UI**: Server ON/OFF management
 
 #### Technology Stack
 
@@ -147,34 +147,34 @@ AIris Suite、FocusToday Suite等の複数プロダクトを単一基盤で開�
 
 #### Target Metrics
 
-- **5年目標**: 10,000開発者利用
-- **効率化**: トークン使用量90%削減、待ち時間80%短縮
-- **採用率**: AI開発者の標準ツールへ
+- **5-year Goal**: 10,000 developer users
+- **Efficiency**: 90% token usage reduction, 80% wait time reduction
+- **Adoption**: Become standard tool for AI developers
 
 ---
 
 ## 🤝 Open Source Contributions
 
-### SuperClaude Framework - AI開発フレームワーク
+### SuperClaude Framework - AI Development Framework
 
 **Status**: Active Contributor
 **Repository**: [SuperClaude-Org/SuperClaude_Framework](https://github.com/SuperClaude-Org/SuperClaude_Framework)
-**Role**: コントリビューター
+**Role**: Contributor
 
-#### 概要
+#### Overview
 
-AI開発ワークフローを最適化するフレームワーク。私たちは積極的にコントリビュートしています。
+A framework that optimizes AI development workflows. We actively contribute to this project.
 
 #### Contribution Areas
 
-- 🐛 **Bug Fixes**: バグ修正・品質向上
-- 📚 **Documentation**: ドキュメント改善・翻訳
-- ✨ **Feature Additions**: 新機能の提案・実装
-- 🧪 **Testing**: テストカバレッジ向上
+- 🐛 **Bug Fixes**: Bug fixes and quality improvements
+- 📚 **Documentation**: Documentation improvements and translations
+- ✨ **Feature Additions**: Proposing and implementing new features
+- 🧪 **Testing**: Improving test coverage
 
 #### Our Philosophy
 
-オープンソースコミュニティへの貢献を通じて、技術力を高め、知見を共有します。私たちは「車輪の再発明をしない」原則に基づき、既存OSSを最大限活用し、コミュニティに還元します。
+We enhance our technical skills and share knowledge through contributions to open source communities. Based on the principle of "don't reinvent the wheel," we maximize use of existing OSS and give back to the community.
 
 ---
 
@@ -189,9 +189,9 @@ AI開発ワークフローを最適化するフレームワーク。私たちは
 | SuperClaude Framework | 🤝 Contributing | Contribution | MIT | Public |
 
 **Legend**:
-- ✅ Production: 本番運用中
-- 🚧 Development: 開発中
-- 🤝 Contributing: アクティブにコントリビュート中
+- ✅ Production: In production
+- 🚧 Development: Under development
+- 🤝 Contributing: Actively contributing
 
 ---
 
@@ -203,31 +203,31 @@ AI開発ワークフローを最適化するフレームワーク。私たちは
 - AIRIS MCP Gateway v1.0 Release
 
 ### 2026
-- AIris Suite Production Launch（100社導入目標）
+- AIris Suite Production Launch (100 company deployment goal)
 - FocusToday Suite Production Launch
-- AIRIS MCP Gateway（1,000開発者利用目標）
+- AIRIS MCP Gateway (1,000 developer user goal)
 
 ### 2027-2030
-- AIris Suite（1,000社導入目標）
-- AIRIS MCP Gateway（10,000開発者利用目標）
-- FocusToday Suite（標準ツールとしての地位確立）
+- AIris Suite (1,000 company deployment goal)
+- AIRIS MCP Gateway (10,000 developer user goal)
+- FocusToday Suite (establish position as standard tool)
 
 ---
 
 ## 🤝 Get Involved
 
 ### For Users
-各プロダクトのREADMEを参照してください。
+Please refer to each product's README.
 
 ### For Developers
-- [CONTRIBUTING.md](./CONTRIBUTING.md) - 貢献ガイドライン
-- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - 行動規範
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
+- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - Code of conduct
 
 ### For Partners
-- Email: contact@agiletec.inc (準備中)
+- Email: hello@agiletec.net
 
 ---
 
-**"すべての企業に自社開発。多重請負構造を、終わらせる。"**
+**"In-house development for every company. End the multi-tier subcontracting structure."**
 
 — Agiletec Inc.
