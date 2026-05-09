@@ -1,0 +1,50 @@
+name: Node.js pnpm CI
+
+# Reusable: call from any Node.js + pnpm repo with
+#   jobs:
+#     ci:
+#       uses: agiletec-inc/.github/.github/workflows/node-pnpm-ci.yml@main
+#       with:
+#         node-version: '22'
+#         run-command: pnpm turbo run lint typecheck test
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: Node.js version
+        type: string
+        default: '22'
+      run-command:
+        description: Command to run after install (lint/typecheck/test)
+        type: string
+        default: pnpm test
+      timeout-minutes:
+        description: Job timeout in minutes
+        type: number
+        default: 15
+      frozen-lockfile:
+        description: Use --frozen-lockfile flag
+        type: boolean
+        default: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      # pnpm version is read from package.json `packageManager` field
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install ${{ inputs.frozen-lockfile && '--frozen-lockfile' || '' }}
+        env:
+          PNPM_FETCH_RETRIES: "5"
+      - name: Run checks
+        run: ${{ inputs.run-command }}
