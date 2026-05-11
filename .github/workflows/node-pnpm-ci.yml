@@ -7,6 +7,7 @@ name: Node.js pnpm CI
 #       with:
 #         node-version: '22'
 #         run-command: pnpm turbo run lint typecheck test
+#         runs-on: agiletec-self-hosted-runner  # omit for GitHub-hosted
 on:
   workflow_call:
     inputs:
@@ -26,11 +27,15 @@ on:
         description: Use --frozen-lockfile flag
         type: boolean
         default: true
+      runs-on:
+        description: Runner label (e.g. agiletec-self-hosted-runner or ubuntu-latest)
+        type: string
+        default: ubuntu-latest
 
 jobs:
   ci:
     name: ci
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     steps:
       - uses: actions/checkout@v6

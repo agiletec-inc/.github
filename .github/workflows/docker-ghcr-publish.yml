@@ -7,6 +7,7 @@ name: Docker GHCR Publish
 #       with:
 #         image-name: my-image
 #         dockerfile: ./Dockerfile
+#         runs-on: agiletec-self-hosted-runner  # omit for GitHub-hosted
 on:
   workflow_call:
     inputs:
@@ -30,11 +31,15 @@ on:
         description: Push image (false = build only)
         type: boolean
         default: true
+      runs-on:
+        description: Runner label (e.g. agiletec-self-hosted-runner or ubuntu-latest)
+        type: string
+        default: ubuntu-latest
 
 jobs:
   build-and-push:
     name: docker-publish
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     timeout-minutes: 30
     permissions:
       contents: read
