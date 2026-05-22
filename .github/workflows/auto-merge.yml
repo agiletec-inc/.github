@@ -1,0 +1,48 @@
+name: Auto-merge
+
+# Reusable: call from any private repo with
+#   on:
+#     pull_request:
+#       types: [opened, reopened, synchronize]
+#   jobs:
+#     auto-merge:
+#       uses: agiletec-inc/.github/.github/workflows/auto-merge.yml@main
+#       secrets: inherit
+#       with:
+#         runs-on: agiletec-self-hosted-runner  # omit for GitHub-hosted
+#
+# Prerequisites on the caller repo:
+#   * the `agiletec-automerge` GitHub App is installed on it
+#     (permission: pull-requests write only)
+#   * "Allow auto-merge" is enabled in the repo settings
+#
+# The default GITHUB_TOKEN cannot enable auto-merge — it fails with
+# "Resource not accessible by integration". A token minted from the
+# agiletec-automerge App is used instead. That App carries only
+# pull-requests:write, so a leaked token cannot push code — unlike the
+# deploy-bumper App, which is deliberately kept to agile-server alone.
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        description: Runner label (e.g. agiletec-self-hosted-runner or ubuntu-latest)
+        type: string
+        default: ubuntu-latest
+
+jobs:
+  enable-auto-merge:
+    name: auto-merge
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: 5
+    steps:
+      - name: Mint app token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          client-id: ${{ vars.AUTOMERGE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.AUTOMERGE_APP_PRIVATE_KEY }}
+      - name: Enable auto-merge (merge commit)
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --merge "$PR_URL"
