@@ -12,15 +12,17 @@ name: Auto-merge
 #         runs-on: agiletec-self-hosted-runner  # omit for GitHub-hosted
 #
 # Prerequisites on the caller repo:
-#   * the `agiletec-automerge` GitHub App is installed on it
-#     (permission: pull-requests write only)
+#   * the `agiletec-automerge` GitHub App is installed on it, with
+#     Contents: write AND Pull requests: write — enabling auto-merge
+#     pre-authorizes a future merge, so contents:write is required too
+#     (a pull-requests-only token gets FORBIDDEN from the API)
 #   * "Allow auto-merge" is enabled in the repo settings
 #
 # The default GITHUB_TOKEN cannot enable auto-merge — it fails with
 # "Resource not accessible by integration". A token minted from the
-# agiletec-automerge App is used instead. That App carries only
-# pull-requests:write, so a leaked token cannot push code — unlike the
-# deploy-bumper App, which is deliberately kept to agile-server alone.
+# purpose-built agiletec-automerge App is used instead; that App carries
+# only contents + pull-requests write — no admin, no actions, no
+# secrets — unlike the deploy-bumper App, kept to agile-server alone.
 on:
   workflow_call:
     inputs:
@@ -41,9 +43,10 @@ jobs:
         with:
           client-id: ${{ vars.AUTOMERGE_APP_CLIENT_ID }}
           private-key: ${{ secrets.AUTOMERGE_APP_PRIVATE_KEY }}
-          # Scope the token to exactly what enabling auto-merge needs.
-          # Defaults to the calling repo only (owner/repositories unset).
-          permission-pull-requests: write
+          # No permission-* overrides: the agiletec-automerge App is
+          # already purpose-scoped to contents + pull-requests write,
+          # both of which enabling auto-merge needs. The token defaults
+          # to the calling repo only (owner/repositories unset).
       - name: Enable auto-merge (merge commit)
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
