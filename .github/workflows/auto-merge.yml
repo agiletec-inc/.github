@@ -36,11 +36,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Mint app token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         id: app-token
         with:
           client-id: ${{ vars.AUTOMERGE_APP_CLIENT_ID }}
           private-key: ${{ secrets.AUTOMERGE_APP_PRIVATE_KEY }}
+          # Scope the token to exactly what enabling auto-merge needs.
+          # Defaults to the calling repo only (owner/repositories unset).
+          permission-pull-requests: write
       - name: Enable auto-merge (merge commit)
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
