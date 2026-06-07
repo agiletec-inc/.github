@@ -1,6 +1,6 @@
 name: Auto-merge
 
-# Reusable: call from any private repo with
+# Reusable auto-merge. Call from any repo with:
 #   on:
 #     pull_request:
 #       types: [opened, reopened, synchronize]
@@ -9,46 +9,48 @@ name: Auto-merge
 #       uses: agiletec-inc/.github/.github/workflows/auto-merge.yml@main
 #       secrets: inherit
 #       with:
-#         runs-on: agiletec-self-hosted-runner  # omit for GitHub-hosted
+#         runs-on: agiletec-self-hosted-runner   # omit for GitHub-hosted
 #
-# Prerequisites on the caller repo:
-#   * the `agiletec-automerge` GitHub App is installed on it, with
-#     Contents: write AND Pull requests: write — enabling auto-merge
-#     pre-authorizes a future merge, so contents:write is required too
-#     (a pull-requests-only token gets FORBIDDEN from the API)
-#   * "Allow auto-merge" is enabled in the repo settings
+# Enables native auto-merge (`gh pr merge --auto`), which merges the PR once
+# its required status checks pass.
 #
-# The default GITHUB_TOKEN cannot enable auto-merge — it fails with
-# "Resource not accessible by integration". A token minted from the
-# purpose-built agiletec-automerge App is used instead; that App carries
-# only contents + pull-requests write — no admin, no actions, no
-# secrets — unlike the deploy-bumper App, kept to agile-server alone.
+# REQUIREMENT: the caller repo's branch ruleset must have at least one
+# *required* status check. Native auto-merge has nothing to wait on otherwise,
+# and GitHub rejects the request ("clean status" / "unstable"), so a repo with
+# no required check never auto-merges. This doubles as the "don't merge to main
+# until CI is green" rule.
+#
+# TOKEN: defaults to the built-in GITHUB_TOKEN (granted only contents +
+# pull-requests write below — no GitHub App required). Two caveats:
+#   * a GITHUB_TOKEN merge does NOT trigger downstream workflow runs;
+#   * on some *private* repos GITHUB_TOKEN is rejected with "Resource not
+#     accessible by integration".
+# For either case, pass a scoped App token / PAT via the `merge-token` secret.
+# The repo setting "Allow auto-merge" must be enabled.
+
 on:
   workflow_call:
     inputs:
       runs-on:
-        description: Runner label (e.g. agiletec-self-hosted-runner or ubuntu-latest)
+        description: Runner label (e.g. agiletec-self-hosted-runner or ubuntu-latest).
         type: string
         default: ubuntu-latest
+    secrets:
+      merge-token:
+        description: Optional token override (scoped App/PAT) for repos that need post-merge workflows to fire, or private repos where GITHUB_TOKEN is rejected. Defaults to GITHUB_TOKEN.
+        required: false
 
 jobs:
   enable-auto-merge:
     name: auto-merge
     runs-on: ${{ inputs.runs-on }}
     timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Mint app token
-        uses: actions/create-github-app-token@v3
-        id: app-token
-        with:
-          client-id: ${{ vars.AUTOMERGE_APP_CLIENT_ID }}
-          private-key: ${{ secrets.AUTOMERGE_APP_PRIVATE_KEY }}
-          # No permission-* overrides: the agiletec-automerge App is
-          # already purpose-scoped to contents + pull-requests write,
-          # both of which enabling auto-merge needs. The token defaults
-          # to the calling repo only (owner/repositories unset).
       - name: Enable auto-merge (merge commit)
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.merge-token || github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr merge --auto --merge "$PR_URL"
