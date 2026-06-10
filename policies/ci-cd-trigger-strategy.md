@@ -40,18 +40,24 @@ regex with explicit alternation.
 ## Org-wide enforcement model (CI / quality gates)
 
 CI/品質ゲートは **org ルールセット "Require status checks to pass"**（Team プランで利用可）
-で全リポ一律に強制する。各リポは薄い caller（`.github/workflows/ci.yml`）で
-`agiletec-inc/.github` の reusable を呼ぶだけ。**ロジックの SSoT は reusable 側**（修正は 1 箇所）。
+で強制する。各リポは薄い caller（`.github/workflows/ci.yml`）で `agiletec-inc/.github` の
+reusable を呼ぶだけ。**ロジックの SSoT は reusable 側**（修正は 1 箇所）。
 
+- **ターゲティング = custom property**（GitHub Well-Architected 推奨。repo 名リストでない）。
+  org custom property **`ci_managed`**（true_false, GA 2026-01-13・Team 可）を定義し、ルールセット
+  "Org CI required checks"（id 17507867）を `props.ci_managed:true` フィルタで対象化。**リポは
+  property を立てるだけで enroll、ルールセット定義は不変**。
 - **必須チェック名**: `secret-scan / scan` と `ci / ci`（reusable 呼びのチェック名は
-  `<caller job 名> / <reusable 内 job 名>` で合成される）。reusable の内部 job 名は
-  `secret-scan.yml`→`scan` / 言語 reusable→`ci` に固定済み。
+  `<caller job 名> / <reusable 内 job 名>` で合成）。内部 job 名は `secret-scan.yml`→`scan` /
+  言語 reusable→`ci` に固定済み（enforce 前に安定したチェック名を出す = Well-Architected 準拠）。
 - **caller 配布**: 新規リポは Actions タブの starter template（`.github/workflow-templates/`）から
-  1 クリック。既存リポは `.github/scripts/distribute-ci-callers.sh` で一括 PR。
-- **runner ルーティング**: caller が private→`agiletec-self-hosted-runner` / public→hosted を指定
-  （配布スクリプトが visibility から自動設定）。
+  1 クリック。既存リポは **リポ毎のレビュー付き移行 PR**（PM/run-command を検証。盲目的な一括
+  置換はしない）。配布後にそのリポへ `ci_managed=true` を付与。
+- **runner ルーティング**: caller が private→`agiletec-self-hosted-runner` / public→hosted を指定。
 - **secret-scan**: gitleaks バイナリ直叩き（org でも `GITLEAKS_LICENSE` 不要）。漏洩で実際に
   job を fail させる（`continue-on-error` による空虚な緑を排除）。
+- **ロールアウト**: evaluate→pilot→expand→enforce のうち **evaluate は Enterprise 限定**。Team は
+  **pilot（対象を 1 リポに絞った active）** で代替（airis-keeper で実証済）。
 
 > **不採用**: org ルールセットの "Require workflows to pass before merging"（ゲートを各リポに
 > 自動注入し caller ファイルを不要にする機能）は **GitHub Enterprise Cloud 限定**。org plan が
@@ -135,4 +141,5 @@ not optional decoration.
 - [GitHub Actions 2026 Security Roadmap](https://github.blog/news-insights/product-news/whats-coming-to-our-github-actions-2026-security-roadmap/) — least-privilege `secrets:` policy, scoped secrets
 - Reusable workflows in this repo: `secret-scan.yml`, `node-pnpm-ci.yml`, `rust-cargo-ci.yml`, `python-ci.yml`, `swift-ci.yml`, `docker-ghcr-publish.yml`, `auto-merge.yml`
 - Starter templates: `.github/workflow-templates/{node,rust,python,swift}-ci.yml`
-- Bulk caller distribution: `.github/scripts/distribute-ci-callers.sh`
+- Targeting: org custom property `ci_managed` + ruleset "Org CI required checks" (id 17507867)
+- [Well-Architected: rulesets best practices](https://wellarchitected.github.com/library/governance/recommendations/managing-repositories-at-scale/rulesets-best-practices/) (custom-property targeting)
