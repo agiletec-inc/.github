@@ -12,8 +12,14 @@ org plan = **`team`**. The ruleset rule "Require workflows to pass before mergin
 (auto-injects a gate into every repo, no per-repo file) is **Enterprise Cloud only** and
 does not run on Team. Decision: **stay on Team** and enforce CI org-wide via the
 **"Require status checks to pass"** ruleset rule (Team-available) + standardized check
-names (`secret-scan / scan`, `ci / ci`) + thin per-repo callers seeded from the org
-reusables. See `ci-cd-trigger-strategy.md` § Org-wide enforcement model.
+names (`secret-scan / scan`, `ci / ci`) + thin per-repo callers from the org reusables.
+
+**Targeting = custom property** (GitHub Well-Architected recommendation, not repo-name
+lists): org custom property `ci_managed` (true_false) + ruleset "Org CI required checks"
+(id 17507867) filtering on `props.ci_managed:true`. A repo enrolls by setting the property;
+the ruleset definition never changes. New repos: starter workflow + property. Existing
+repos: per-repo reviewed migration PR, then set the property. See
+`ci-cd-trigger-strategy.md` § Org-wide enforcement model.
 
 ## Summary
 
@@ -23,9 +29,9 @@ reusables. See `ci-cd-trigger-strategy.md` § Org-wide enforcement model.
 | Reusable workflows (`secret-scan`, `node-pnpm-ci`, `rust-cargo-ci`, `python-ci`, `swift-ci`, `docker-publish`, `auto-merge`) | ✅ exist (multi-lang as of 2026-06-10) |
 | Reusable actions SHA-pinned (in `.github` repo) | ✅ done + Dependabot bumps |
 | Starter templates (`workflow-templates/`) | ✅ added (node/rust/python/swift) |
-| Bulk caller distribution script | ✅ added (`scripts/distribute-ci-callers.sh`) |
-| Reusable **adoption** across repos | ⚠️ thin — run distribution script (see matrix) |
-| org ruleset "Require status checks" created | ❌ TODO (manual; after pilot confirms check names) |
+| Custom property `ci_managed` + property-targeted ruleset (id 17507867) | ✅ created (active) |
+| Reusable **adoption** across repos | ⚠️ thin — migrate per-repo (see matrix), then set `ci_managed=true` |
+| Pilot enrolled (`airis-keeper`, `ci_managed=true`, gated) | ✅ done |
 | Public repos on release-driven CD | ✅ done (cmd-ime / airis-mcp-gateway reference impls) |
 | Private (agiletec / agile-server) release-driven migration | ❌ TODO (plan 520 Step 5–9) |
 | Runner labels unified | ❌ fragmented (4 self-hosted labels) |
@@ -95,23 +101,23 @@ near-zero OIDC usage is fine.
 
 ## Remediation checklist (prioritized)
 
-1. **Pilot one repo** (e.g. `airis-keeper`): add the caller, open a PR, confirm the real
-   check names via `gh pr checks` are `secret-scan / scan` and `ci / ci`, and that
-   private→ARC / public→hosted runner routing works.
-2. **Create the org ruleset** "Require status checks to pass" with those exact check names.
-   Start in **Evaluate** (dry-run), watch Rule Insights, then flip to **Active**.
-3. **Bulk-distribute callers** to the remaining simple repos:
-   `APPLY=1 .github/scripts/distribute-ci-callers.sh` (auto-detects language + visibility;
-   skips `.github`, agiletec, agile-server, airis-studio).
-4. **Migrate bespoke `ci.yml`** in the multi-lang repos to call the new reusables
-   (`rust-cargo-ci` / `python-ci` / `swift-ci`), folding per-repo knobs into reusable inputs.
-5. **Heavy bespoke repos** (agiletec / airis-studio / agile-server): keep custom CI but make
-   it emit the `ci` / `secret-scan` check names, or exclude them from the ruleset target.
-6. **SHA-pin actions in consumer repos** + add Dependabot `github-actions` (the reusables in
-   `.github` are already pinned + Dependabot-tracked).
-7. **Private release-driven migration** (plan 520 Step 5–9) for agiletec / agile-server.
-8. **Runner-label consolidation** via ARC runner scale sets (cluster change → agile-server
+- [x] **Pilot** (`airis-keeper`): caller PR #4, checks `secret-scan / scan` + `ci / ci` green,
+  public→hosted routing confirmed.
+- [x] **Custom property + ruleset**: `ci_managed` (true_false) + ruleset id 17507867 (active)
+  targeting `props.ci_managed:true`. airis-keeper enrolled.
+
+1. **Migrate bespoke `ci.yml` per repo** (reviewed PRs, airis-keeper pattern — validate
+   package manager / run-command / green). Then set `ci_managed=true` on that repo to enroll.
+   Order: voom / mail-cleanse / cmd-ime / duplicate-finder / airis-workspace / mindbase /
+   airis-mcp-gateway / mcp (`rust-cargo-ci` / `python-ci` / `swift-ci` / `node-pnpm-ci`).
+2. **New repos**: starter workflow (1-click) + `ci_managed=true`.
+3. **Heavy bespoke repos** (agiletec / airis-studio / agile-server): leave `ci_managed` unset
+   (excluded), or make their CI emit `ci` / `secret-scan` check names before enrolling.
+4. **SHA-pin actions in consumer repos** + add Dependabot `github-actions` (the `.github`
+   reusables are already pinned + Dependabot-tracked).
+5. **Private release-driven migration** (plan 520 Step 5–9) for agiletec / agile-server.
+6. **Runner-label consolidation** via ARC runner scale sets (cluster change → agile-server
    GitOps PR).
 
-Items 1–6 are low-risk (incremental PRs). Items 7–8 touch prod / the cluster and need
+Items 1–4 are low-risk (incremental PRs). Items 5–6 touch prod / the cluster and need
 dedicated, separately-approved efforts.
