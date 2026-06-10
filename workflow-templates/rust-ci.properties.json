@@ -1,0 +1,7 @@
+{
+  "name": "Rust (cargo) CI — agiletec-inc",
+  "description": "Secret scan + fmt/clippy/test/audit via the org reusable workflows.",
+  "iconName": "rust",
+  "categories": ["Continuous integration", "Rust"],
+  "filePattern": "ci.yml"
+}

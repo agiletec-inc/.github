@@ -1,0 +1,7 @@
+{
+  "name": "Swift (SPM) CI — agiletec-inc",
+  "description": "Secret scan + swift test/release-build via the org reusable workflows.",
+  "iconName": "swift",
+  "categories": ["Continuous integration", "Swift"],
+  "filePattern": "ci.yml"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Python (uv/pip) CI — agiletec-inc",
+  "description": "Secret scan + ruff/pytest/pip-audit/bandit via the org reusable workflows.",
+  "iconName": "python",
+  "categories": ["Continuous integration", "Python"],
+  "filePattern": "ci.yml"
+}

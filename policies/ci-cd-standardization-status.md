@@ -6,17 +6,30 @@ adopted it** and the prioritized work to close the gaps.
 
 **Snapshot: 2026-06-10** (regenerate by re-surveying `*/.github/workflows/`).
 
+## Enforcement model decision (2026-06-10)
+
+org plan = **`team`**. The ruleset rule "Require workflows to pass before merging"
+(auto-injects a gate into every repo, no per-repo file) is **Enterprise Cloud only** and
+does not run on Team. Decision: **stay on Team** and enforce CI org-wide via the
+**"Require status checks to pass"** ruleset rule (Team-available) + standardized check
+names (`secret-scan / scan`, `ci / ci`) + thin per-repo callers seeded from the org
+reusables. See `ci-cd-trigger-strategy.md` § Org-wide enforcement model.
+
 ## Summary
 
 | Area | State |
 |---|---|
 | Policy / SSoT (`ci-cd-trigger-strategy.md`) | ✅ done |
-| Reusable workflows published (`node-pnpm-ci`, `docker-ghcr-publish`, `secret-scan`, `auto-merge`) | ✅ exist |
-| Reusable **adoption** across repos | ⚠️ thin (see matrix) |
+| Reusable workflows (`secret-scan`, `node-pnpm-ci`, `rust-cargo-ci`, `python-ci`, `swift-ci`, `docker-publish`, `auto-merge`) | ✅ exist (multi-lang as of 2026-06-10) |
+| Reusable actions SHA-pinned (in `.github` repo) | ✅ done + Dependabot bumps |
+| Starter templates (`workflow-templates/`) | ✅ added (node/rust/python/swift) |
+| Bulk caller distribution script | ✅ added (`scripts/distribute-ci-callers.sh`) |
+| Reusable **adoption** across repos | ⚠️ thin — run distribution script (see matrix) |
+| org ruleset "Require status checks" created | ❌ TODO (manual; after pilot confirms check names) |
 | Public repos on release-driven CD | ✅ done (cmd-ime / airis-mcp-gateway reference impls) |
 | Private (agiletec / agile-server) release-driven migration | ❌ TODO (plan 520 Step 5–9) |
 | Runner labels unified | ❌ fragmented (4 self-hosted labels) |
-| Action SHA-pinning enforced org-wide | ❌ not enforced |
+| Action SHA-pinning enforced org-wide (consumer repos) | ⚠️ partial — reusables pinned; consumers via migration |
 
 ## Reusable-workflow adoption matrix
 
@@ -82,15 +95,23 @@ near-zero OIDC usage is fine.
 
 ## Remediation checklist (prioritized)
 
-1. **Make `secret-scan` a required check in every repo** — cheapest, highest security ROI.
-   Add a 6-line `secret-scan.yml` calling the reusable (SHA-pinned). _(mail-cleanse done.)_
-2. **SHA-pin all actions + enable the org SHA-pin policy.** Add Dependabot `github-actions`
-   to each repo.
-3. **Migrate hand-rolled `ci.yml` → `node-pnpm-ci.yml` reusable** where the build matches,
-   to kill duplication.
-4. **Private release-driven migration** (plan 520 Step 5–9) for agiletec / agile-server.
-5. **Runner-label consolidation** via ARC runner scale sets (cluster change → agile-server
+1. **Pilot one repo** (e.g. `airis-keeper`): add the caller, open a PR, confirm the real
+   check names via `gh pr checks` are `secret-scan / scan` and `ci / ci`, and that
+   private→ARC / public→hosted runner routing works.
+2. **Create the org ruleset** "Require status checks to pass" with those exact check names.
+   Start in **Evaluate** (dry-run), watch Rule Insights, then flip to **Active**.
+3. **Bulk-distribute callers** to the remaining simple repos:
+   `APPLY=1 .github/scripts/distribute-ci-callers.sh` (auto-detects language + visibility;
+   skips `.github`, agiletec, agile-server, airis-studio).
+4. **Migrate bespoke `ci.yml`** in the multi-lang repos to call the new reusables
+   (`rust-cargo-ci` / `python-ci` / `swift-ci`), folding per-repo knobs into reusable inputs.
+5. **Heavy bespoke repos** (agiletec / airis-studio / agile-server): keep custom CI but make
+   it emit the `ci` / `secret-scan` check names, or exclude them from the ruleset target.
+6. **SHA-pin actions in consumer repos** + add Dependabot `github-actions` (the reusables in
+   `.github` are already pinned + Dependabot-tracked).
+7. **Private release-driven migration** (plan 520 Step 5–9) for agiletec / agile-server.
+8. **Runner-label consolidation** via ARC runner scale sets (cluster change → agile-server
    GitOps PR).
 
-Items 1–3 are per-repo and low-risk (incremental PRs). Items 4–5 touch prod / the cluster
-and need dedicated, separately-approved efforts.
+Items 1–6 are low-risk (incremental PRs). Items 7–8 touch prod / the cluster and need
+dedicated, separately-approved efforts.
