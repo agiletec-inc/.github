@@ -1,13 +1,15 @@
-name: Node.js pnpm CI
+name: Node.js CI
 
-# Reusable: call from any Node.js + pnpm repo with
+# Reusable: Node.js CI for any package manager (auto-detects npm / pnpm / yarn by lockfile).
+# Filename kept as node-pnpm-ci.yml for backward-compat with existing callers.
 #   jobs:
 #     ci:
 #       uses: agiletec-inc/.github/.github/workflows/node-pnpm-ci.yml@main
 #       with:
-#         node-version: '22'
-#         run-command: pnpm turbo run lint typecheck test
-#         runs-on: agiletec-self-hosted-runner  # omit for GitHub-hosted
+#         run-command: pnpm turbo run build lint test   # omit => "<pm> test"
+#         runs-on: agiletec-self-hosted-runner          # omit for GitHub-hosted
+#
+# Resulting status-check name (for org ruleset): "ci / ci"
 on:
   workflow_call:
     inputs:
@@ -15,16 +17,20 @@ on:
         description: Node.js version
         type: string
         default: '22'
-      run-command:
-        description: Command to run after install (lint/typecheck/test)
+      package-manager:
+        description: Package manager — auto (detect by lockfile) | npm | pnpm | yarn
         type: string
-        default: pnpm test
+        default: auto
+      run-command:
+        description: Command to run after install (empty => "<pm> test")
+        type: string
+        default: ''
       timeout-minutes:
         description: Job timeout in minutes
         type: number
         default: 15
       frozen-lockfile:
-        description: Use --frozen-lockfile flag
+        description: Install with a frozen/clean lockfile
         type: boolean
         default: true
       runs-on:
@@ -41,15 +47,50 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 2
-      # pnpm version is read from package.json `packageManager` field
-      - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
+      - name: Detect package manager
+        id: pm
+        env:
+          PM_INPUT: ${{ inputs.package-manager }}
+        run: |
+          set -euo pipefail
+          pm="$PM_INPUT"
+          if [ "$pm" = auto ]; then
+            if [ -f pnpm-lock.yaml ]; then pm=pnpm
+            elif [ -f yarn.lock ]; then pm=yarn
+            else pm=npm
+            fi
+          fi
+          echo "pm=$pm" >> "$GITHUB_OUTPUT"
+          echo "Package manager: $pm"
+      # pnpm must be installed before setup-node's pnpm cache resolves.
+      - if: steps.pm.outputs.pm == 'pnpm'
+        uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ inputs.node-version }}
-          cache: pnpm
+          cache: ${{ steps.pm.outputs.pm }}
       - name: Install dependencies
-        run: pnpm install ${{ inputs.frozen-lockfile && '--frozen-lockfile' || '' }}
         env:
+          PM: ${{ steps.pm.outputs.pm }}
+          FROZEN: ${{ inputs.frozen-lockfile }}
           PNPM_FETCH_RETRIES: "5"
+        run: |
+          set -euo pipefail
+          frozen=""
+          [ "$FROZEN" = true ] && frozen="--frozen-lockfile"
+          case "$PM" in
+            pnpm) pnpm install $frozen ;;
+            yarn) yarn install $frozen ;;
+            npm)  if [ "$FROZEN" = true ]; then npm ci; else npm install; fi ;;
+          esac
       - name: Run checks
-        run: ${{ inputs.run-command }}
+        env:
+          PM: ${{ steps.pm.outputs.pm }}
+          RUN_COMMAND: ${{ inputs.run-command }}
+        run: |
+          set -euo pipefail
+          if [ -n "$RUN_COMMAND" ]; then
+            eval "$RUN_COMMAND"
+          else
+            "$PM" test
+          fi
