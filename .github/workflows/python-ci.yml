@@ -33,6 +33,10 @@ on:
         description: Override lint+test step (empty => derived from tool)
         type: string
         default: ''
+      cov-fail-under:
+        description: Coverage ratchet — pytest --cov-fail-under=<N> (empty => no coverage gate)
+        type: string
+        default: ''
       timeout-minutes:
         type: number
         default: 20
@@ -89,18 +93,21 @@ jobs:
         env:
           TOOL: ${{ steps.tool.outputs.tool }}
           OVERRIDE: ${{ inputs.test-command }}
+          COV: ${{ inputs.cov-fail-under }}
         run: |
           set -euo pipefail
+          pytest_args=""
+          [ -n "$COV" ] && pytest_args="--cov --cov-report=term-missing --cov-fail-under=$COV"
           if [ -n "$OVERRIDE" ]; then
             eval "$OVERRIDE"
           elif [ "$TOOL" = "uv" ]; then
             uv run ruff check .
             uv run ruff format --check .
-            uv run pytest
+            uv run pytest $pytest_args
           else
             ruff check .
             ruff format --check .
-            pytest
+            pytest $pytest_args
           fi
       - name: Security checks
         if: inputs.security-checks

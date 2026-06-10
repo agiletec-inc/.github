@@ -35,6 +35,14 @@ on:
         description: Run cargo-audit (RustSec) as a gate
         type: boolean
         default: true
+      package-size-check:
+        description: Run `cargo package` and fail if the .crate exceeds crates.io's 10MB limit
+        type: boolean
+        default: false
+      windows-check:
+        description: Add a windows-latest job running `cargo check` (catches Windows-only breakage)
+        type: boolean
+        default: false
 
 jobs:
   ci:
@@ -61,3 +69,33 @@ jobs:
         uses: rustsec/audit-check@69366f33c96575abad1ee0dba8212993eecbe998 # v2.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Package size check (crates.io 10MB limit)
+        if: inputs.package-size-check
+        run: |
+          set -euo pipefail
+          cargo package --no-verify --allow-dirty
+          crate=$(ls target/package/*.crate | head -1)
+          bytes=$(stat -c%s "$crate")
+          limit=10485760
+          echo "Crate: $crate — $bytes bytes (limit $limit)"
+          if [ "$bytes" -gt "$limit" ]; then
+            echo "::error::Package exceeds crates.io 10MB limit ($bytes > $limit)"
+            exit 1
+          fi
+          echo "OK: under limit"
+
+  windows:
+    name: windows
+    if: inputs.windows-check
+    runs-on: windows-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master (pinned)
+        with:
+          toolchain: ${{ inputs.toolchain }}
+      - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
+      - name: Cargo check
+        run: cargo check --all-targets
