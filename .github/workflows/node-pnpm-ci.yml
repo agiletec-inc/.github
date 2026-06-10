@@ -1,40 +1,57 @@
 name: Node.js CI
 
-# Reusable: Node.js CI for any package manager (auto-detects npm / pnpm / yarn by lockfile).
-# Filename kept as node-pnpm-ci.yml for backward-compat with existing callers.
+# Reusable, opinionated baseline for any Node package manager (npm / pnpm / yarn,
+# auto-detected by lockfile). Runs the mandatory quality gates by default — a caller
+# gets lint + typecheck + test + build + audit with ZERO config:
+#
 #   jobs:
 #     ci:
-#       uses: agiletec-inc/.github/.github/workflows/node-pnpm-ci.yml@main
-#       with:
-#         run-command: pnpm turbo run build lint test   # omit => "<pm> test"
-#         runs-on: agiletec-self-hosted-runner          # omit for GitHub-hosted
+#       uses: agiletec-inc/.github/.github/workflows/node-pnpm-ci.yml@<SHA>
+#       # (optionally) with: { runs-on: agiletec-self-hosted-runner }
+#
+# Each gate runs the repo's npm script of the same name (`<pm> run lint` etc.); a
+# missing mandatory script fails the job on purpose (the baseline expects it to exist).
+# Turn a gate off with e.g. `with: { typecheck: false }` for the rare legitimate case.
+# `run-command` (legacy) overrides the whole baseline when set.
 #
 # Resulting status-check name (for org ruleset): "ci / ci"
 on:
   workflow_call:
     inputs:
       node-version:
-        description: Node.js version
         type: string
         default: '22'
       package-manager:
-        description: Package manager — auto (detect by lockfile) | npm | pnpm | yarn
+        description: auto (detect by lockfile) | npm | pnpm | yarn
         type: string
         default: auto
-      run-command:
-        description: Command to run after install (empty => "<pm> test")
-        type: string
-        default: ''
-      timeout-minutes:
-        description: Job timeout in minutes
-        type: number
-        default: 15
-      frozen-lockfile:
-        description: Install with a frozen/clean lockfile
+      lint:
         type: boolean
         default: true
+      typecheck:
+        type: boolean
+        default: true
+      test:
+        type: boolean
+        default: true
+      build:
+        type: boolean
+        default: true
+      audit:
+        description: Run `<pm> audit --audit-level=high`
+        type: boolean
+        default: true
+      run-command:
+        description: Legacy override — when set, runs this INSTEAD of the baseline gates
+        type: string
+        default: ''
+      frozen-lockfile:
+        type: boolean
+        default: true
+      timeout-minutes:
+        type: number
+        default: 15
       runs-on:
-        description: Runner label (e.g. agiletec-self-hosted-runner or ubuntu-latest)
         type: string
         default: ubuntu-latest
 
@@ -43,6 +60,10 @@ jobs:
     name: ci
     runs-on: ${{ inputs.runs-on }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
+    permissions:
+      contents: read
+    env:
+      PM: ''  # set by Detect step
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
@@ -61,8 +82,8 @@ jobs:
             fi
           fi
           echo "pm=$pm" >> "$GITHUB_OUTPUT"
+          echo "PM=$pm" >> "$GITHUB_ENV"
           echo "Package manager: $pm"
-      # pnpm must be installed before setup-node's pnpm cache resolves.
       - if: steps.pm.outputs.pm == 'pnpm'
         uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6.0.8
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -71,7 +92,6 @@ jobs:
           cache: ${{ steps.pm.outputs.pm }}
       - name: Install dependencies
         env:
-          PM: ${{ steps.pm.outputs.pm }}
           FROZEN: ${{ inputs.frozen-lockfile }}
           PNPM_FETCH_RETRIES: "5"
         run: |
@@ -83,14 +103,25 @@ jobs:
             yarn) yarn install $frozen ;;
             npm)  if [ "$FROZEN" = true ]; then npm ci; else npm install; fi ;;
           esac
-      - name: Run checks
-        env:
-          PM: ${{ steps.pm.outputs.pm }}
-          RUN_COMMAND: ${{ inputs.run-command }}
-        run: |
-          set -euo pipefail
-          if [ -n "$RUN_COMMAND" ]; then
-            eval "$RUN_COMMAND"
-          else
-            "$PM" test
-          fi
+
+      # ---- Legacy override: run a single command instead of the baseline ----
+      - name: Run override command
+        if: inputs.run-command != ''
+        run: ${{ inputs.run-command }}
+
+      # ---- Opinionated baseline gates (skipped when run-command is set) ----
+      - name: Lint
+        if: inputs.run-command == '' && inputs.lint
+        run: $PM run lint
+      - name: Typecheck
+        if: inputs.run-command == '' && inputs.typecheck
+        run: $PM run typecheck
+      - name: Test
+        if: inputs.run-command == '' && inputs.test
+        run: $PM test
+      - name: Build
+        if: inputs.run-command == '' && inputs.build
+        run: $PM run build
+      - name: Audit
+        if: inputs.run-command == '' && inputs.audit
+        run: $PM audit --audit-level=high

@@ -15,6 +15,6 @@ jobs:
   secret-scan:
     uses: agiletec-inc/.github/.github/workflows/secret-scan.yml@main
   ci:
+    # Opinionated baseline: lint + typecheck + test + build + audit (zero config).
+    # Disable a gate with e.g. `with: { build: false }`.
     uses: agiletec-inc/.github/.github/workflows/node-pnpm-ci.yml@main
-    with:
-      run-command: pnpm turbo run build lint test
