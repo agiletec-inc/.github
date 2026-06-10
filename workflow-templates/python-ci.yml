@@ -1,0 +1,21 @@
+name: CI
+
+# Thin caller — logic lives in agiletec-inc/.github reusables.
+# Produces required checks: "secret-scan / scan" and "ci / ci".
+# `tool: auto` picks uv when uv.lock exists, else pip.
+# For PRIVATE repos add `with: { runs-on: agiletec-self-hosted-runner }`.
+on:
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secret-scan:
+    uses: agiletec-inc/.github/.github/workflows/secret-scan.yml@main
+  ci:
+    uses: agiletec-inc/.github/.github/workflows/python-ci.yml@main
+    with:
+      tool: auto

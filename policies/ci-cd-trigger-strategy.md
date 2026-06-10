@@ -37,6 +37,29 @@ no bump attempted. Tag parsers using `sed` / `cut` / `awk` are brittle
 against hyphenated app names (`bid-alert`, `evidence-script`); use
 regex with explicit alternation.
 
+## Org-wide enforcement model (CI / quality gates)
+
+CI/品質ゲートは **org ルールセット "Require status checks to pass"**（Team プランで利用可）
+で全リポ一律に強制する。各リポは薄い caller（`.github/workflows/ci.yml`）で
+`agiletec-inc/.github` の reusable を呼ぶだけ。**ロジックの SSoT は reusable 側**（修正は 1 箇所）。
+
+- **必須チェック名**: `secret-scan / scan` と `ci / ci`（reusable 呼びのチェック名は
+  `<caller job 名> / <reusable 内 job 名>` で合成される）。reusable の内部 job 名は
+  `secret-scan.yml`→`scan` / 言語 reusable→`ci` に固定済み。
+- **caller 配布**: 新規リポは Actions タブの starter template（`.github/workflow-templates/`）から
+  1 クリック。既存リポは `.github/scripts/distribute-ci-callers.sh` で一括 PR。
+- **runner ルーティング**: caller が private→`agiletec-self-hosted-runner` / public→hosted を指定
+  （配布スクリプトが visibility から自動設定）。
+- **secret-scan**: gitleaks バイナリ直叩き（org でも `GITLEAKS_LICENSE` 不要）。漏洩で実際に
+  job を fail させる（`continue-on-error` による空虚な緑を排除）。
+
+> **不採用**: org ルールセットの "Require workflows to pass before merging"（ゲートを各リポに
+> 自動注入し caller ファイルを不要にする機能）は **GitHub Enterprise Cloud 限定**。org plan が
+> `team` の間は使えない（設定画面に出ても実行されない）。Enterprise upgrade（$4→$21/user）は
+> 小規模 org に過剰なため、上記の status-check 強制で同等の効果を得る。差は「caller ファイルが
+> 各リポに要るか否か」だけ。
+> 参照: [Available rules for rulesets](https://docs.github.com/en/enterprise-cloud@latest/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets)
+
 ## Visibility model
 
 The trigger model is the same for private and public repos. What
@@ -52,7 +75,7 @@ differs is which guards do the heavy lifting.
 | Runner | ARC self-hosted (`agiletec-self-hosted-runner`, `airis-studio-runners`, `agile-server-runner`); minimize hosted-minute spend | GitHub-hosted (`ubuntu-latest` / `macos-latest`); free for public |
 | Cross-repo PR auth | GitHub App + `create-github-app-token@v3`, scoped permissions. **PAT banned.** | Standard `GITHUB_TOKEN` or minimally-scoped fine-grained PAT |
 | Auto-merge | Via the `agiletec-automerge` GitHub App (the default `GITHUB_TOKEN` returns "Resource not accessible by integration" for the enable-auto-merge API) | Same App also works; or use `gh pr merge --auto` from the workflow with a PAT for repos that allow it |
-| Reusable CI workflows | Pull from `agiletec-inc/.github` (`auto-merge.yml`, `secret-scan.yml`, `node-pnpm-ci.yml`, `docker-ghcr-publish.yml`) with `runs-on: agiletec-self-hosted-runner` | Pull the same reusables with `runs-on: ubuntu-latest` (default) |
+| Reusable CI workflows | Pull from `agiletec-inc/.github` (`secret-scan.yml`, `node-pnpm-ci.yml`, `rust-cargo-ci.yml`, `python-ci.yml`, `swift-ci.yml`, `docker-ghcr-publish.yml`, `auto-merge.yml`) with `runs-on: agiletec-self-hosted-runner` | Pull the same reusables with `runs-on: ubuntu-latest` (default) |
 
 **The framing "public CI is lighter" is wrong.** Public CI files are
 shorter because the heavy lifting is delegated to GitHub's built-in
@@ -110,4 +133,6 @@ not optional decoration.
 - [GitHub Environments and deployment protection rules](https://docs.github.com/en/actions/managing-workflow-runs-and-deployments/managing-deployments/managing-environments-for-deployment)
 - [About secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)
 - [GitHub Actions 2026 Security Roadmap](https://github.blog/news-insights/product-news/whats-coming-to-our-github-actions-2026-security-roadmap/) — least-privilege `secrets:` policy, scoped secrets
-- Reusable workflows in this repo: `auto-merge.yml`, `secret-scan.yml`, `node-pnpm-ci.yml`, `docker-ghcr-publish.yml`
+- Reusable workflows in this repo: `secret-scan.yml`, `node-pnpm-ci.yml`, `rust-cargo-ci.yml`, `python-ci.yml`, `swift-ci.yml`, `docker-ghcr-publish.yml`, `auto-merge.yml`
+- Starter templates: `.github/workflow-templates/{node,rust,python,swift}-ci.yml`
+- Bulk caller distribution: `.github/scripts/distribute-ci-callers.sh`

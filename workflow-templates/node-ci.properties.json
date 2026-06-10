@@ -1,0 +1,7 @@
+{
+  "name": "Node.js (pnpm) CI — agiletec-inc",
+  "description": "Secret scan + lint/typecheck/test via the org reusable workflows.",
+  "iconName": "nodejs",
+  "categories": ["Continuous integration", "JavaScript", "TypeScript"],
+  "filePattern": "ci.yml"
+}
