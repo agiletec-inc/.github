@@ -92,6 +92,10 @@ not optional decoration.
 
 ## Implementation status (2026-05-29)
 
+> Per-repo adoption status, gap analysis, and the prioritized remediation
+> checklist live in the companion doc
+> [`ci-cd-standardization-status.md`](./ci-cd-standardization-status.md).
+
 - **Public repos**: Already on the release-driven model. `cmd-ime/release.yml`
   uses `pull_request: types: [closed]` + `merged == true` + `workflow_dispatch`;
   `airis-mcp-gateway/release.yml` is a dedicated release workflow.
