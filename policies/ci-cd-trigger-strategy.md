@@ -10,20 +10,24 @@ machine) should link here, not duplicate.
 ## Goals
 
 1. **`main` is always shippable.** Code lands via PR + Required checks. Direct push is banned by the Org Ruleset "Main Branch Protection".
-2. **`main` push builds, but does not deploy.** Image artifacts are produced for every merge; deployment is a separate, deliberate act.
-3. **Stage deploy = GitHub Release `published`.** Cutting a Release is the engineer's explicit "this commit is ready for stg" declaration.
-4. **Production deploy = GitHub Environment with required reviewers.** No bespoke approval scripts; use the built-in `environment:` protection rule.
-5. **Apps without a Release stay out of stg/prd automatically.** Work-in-progress apps don't need feature flags or special-casing — just don't cut a tag.
+2. **`main` merge auto-deploys services to staging.** Passing the quality gate and merging *is* the "ready for stg" signal — no separate Release to cut. Staging is the non-exposed home cluster / the staging Worker env.
+3. **Staging is light, not GitOps.** k3s services bake straight into the node's containerd (`nerdctl --namespace k8s.io build` + `kubectl rollout restart`); Workers use `wrangler deploy --env staging`. No Zot / immutable-SHA / cross-repo-bump ceremony for stg (that's a prod concern). Single-node + private = rebuildable-from-main, so the reproducibility cost isn't worth paying here.
+4. **Production is a deliberate promotion.** Gated by GitHub `environment: prd` (required reviewers) on the reproducible path (Zot immutable SHA + ArgoCD GitOps). No accidental promotion.
+5. **Distributables publish on a Release tag** (`<app>-vMAJOR.MINOR.PATCH`), not on every main commit. WIP apps that cut no tag stay unpublished automatically.
+6. **Manual force-deploy to staging is always available** (`workflow_dispatch` + an on-node script) for when the auto pipeline (ARC runners / merge / sync) stalls and "just won't reflect."
 
 ## Trigger map
 
-| Stage | Trigger | Effect | Failure isolation |
+| Stage | Trigger | Effect | Notes |
 |---|---|---|---|
-| Build | `on: push: branches: [main]` (paths-filtered) | Image build + push to registry. No deploy. | Build break visible on the merge commit itself; can't silently rot in deploy land |
-| Stage deploy | `on: release: types: [published]` | Bump `values/stg.yaml` `image.tag` in the deploy repo (cross-repo PR) → auto-merge → ArgoCD reconciles | Release with bad tag never matches dispatcher → early exit |
-| Production deploy | Same workflow, `environment: prd` declared | Job pauses on `environment` review gate until a required reviewer approves, then bumps `values/prd.yaml` | Reviewer absent = no prod deploy. No accidental promotion |
+| Quality gate | `pull_request` | `secret-scan` + language `ci` reusables (required by the org ruleset) | Green → **auto-merge** via `agiletec-automerge` App |
+| Stage deploy — k3s service | `push: branches: [main]` (paths-filtered) | On the GPU node: `nerdctl --namespace k8s.io build -t <img>:stg` → `kubectl rollout restart deploy/<x> -n <app>-stg`. No Zot, no bump PR, no ArgoCD. | Build break visible on the merge commit; staging is rebuildable from main |
+| Stage deploy — Worker | `push: branches: [main]` (paths-filtered) | `wrangler deploy --env staging` | Registry-free |
+| Force-deploy (escape hatch) | `workflow_dispatch` / on-node script | Same bake + `rollout restart` (k3s) or `wrangler deploy --env staging` (Worker), run out-of-band | Bypasses ARC queue / stuck sync |
+| Publish — distributable | `release: types: [published]` (`<app>-vX.Y.Z`) | Build + publish the artifact (npm / Homebrew / GHCR / GitHub Release) | Not per-commit; no tag → no publish |
+| Production — service | Manual promote, `environment: prd` | Reviewer gate → reproducible path: pin Zot immutable SHA in the deploy repo → ArgoCD reconciles | Reviewer absent = no prod deploy |
 
-### Tag naming convention
+### Tag naming convention (distributables / prod promotion)
 
 `<app>-vMAJOR.MINOR.PATCH[-suffix]`. Examples:
 
@@ -119,19 +123,33 @@ not optional decoration.
   pattern (`.env`, `.env.local`, `.env.*`, `*.pem`, `*credentials*`)
 - Dependabot enabled (free, default for public)
 
-## Implementation status (2026-05-29)
+## Implementation status (revised 2026-06-11)
 
 > Per-repo adoption status, gap analysis, and the prioritized remediation
 > checklist live in the companion doc
 > [`ci-cd-standardization-status.md`](./ci-cd-standardization-status.md).
 
-- **Public repos**: Already on the release-driven model. `cmd-ime/release.yml`
-  uses `pull_request: types: [closed]` + `merged == true` + `workflow_dispatch`;
-  `airis-mcp-gateway/release.yml` is a dedicated release workflow.
-  Reference implementations.
-- **Private repos**: `agiletec` and `agile-server` still on the legacy
-  "main push → auto-bump → auto-deploy stg" model. Migration to release-driven
-  is tracked in plan `~/.claude/plans/520-reach-bit-alert-auto-squishy-allen.md`.
+**Policy reversal (2026-06-11):** the earlier plan to migrate *services* off
+"main → auto-deploy stg" onto a Release-gated stg deploy is **dropped**. For
+single-node, non-exposed staging that Release ceremony (plus the Zot
+immutable-SHA + cross-repo bump-PR dance) was over-engineering. Services now
+auto-deploy to stg on main merge, lightly (k3s: nerdctl direct-bake;
+Worker: `wrangler --env staging`). Release-driven publishing is retained only
+for **distributables** (CLI / desktop / npm / Homebrew / Tauri / MCP images),
+where shipping every commit is wrong. Production stays a deliberate,
+reproducible promotion (`environment: prd` + Zot/GitOps).
+
+- **Distributables (public repos)**: Release-driven. `cmd-ime/release.yml`
+  (`pull_request: closed` + `merged` + `workflow_dispatch`),
+  `airis-mcp-gateway/release.yml`. Reference implementations — unchanged.
+- **Services (k3s + Workers)**: target = main merge → light stg auto-deploy
+  (this doc). agiletec Workers already do `wrangler --env staging` on main;
+  airis-studio k3s moves from the Zot/bump/ArgoCD path to nerdctl direct-bake +
+  `rollout restart` for stg. The persistent `buildkitd` Deployment is retired
+  in favour of nerdctl on the node's containerd.
+- **Quality gate / auto-merge / org ruleset**: unchanged and still the front
+  door for every repo (`ci_managed` + `secret-scan`/`ci` reusables +
+  `agiletec-automerge`); roll-out completion tracked in the companion doc.
 
 ## References
 
