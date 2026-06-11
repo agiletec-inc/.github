@@ -129,12 +129,15 @@ not optional decoration.
   + nerdctl direct-bake。ホスト常駐物ゼロ)。bump PR / 耐久マージャは撤去済み。
   stg=本番の single-environment 運用。
 - **agiletec**: CF Workers (corporate/dashboard) は main push → wrangler deploy
-  (ARC) で stg 自動。k3s stg ワーカー (airis-agent 等) は旧 bump PR 方式が残存
-  — Phase 2 で direct レーンに移行予定 (それまで bump PR は手動マージ)。prd は
+  (ARC) で stg 自動。k3s レーンは廃止済み (agile-server #400 で manifests 全削除、
+  bump 機械と bumper App credential も 2026-06-12 に全撤去)。prd は
   Cloudflare + Supabase、中井手動のみ。
 - **Public repos**: release.yml は配布物の公開用として継続 (cmd-ime /
   airis-mcp-gateway が参照実装)。
 - **旧 release-driven stg deploy 標準 (plan 520) は superseded** (2026-06-12)。
+- **bump PR 機構は org から完全撤去** (2026-06-12): auto-merge-bumps.yml 削除、
+  bump/* ブランチ削除、DEPLOY_BUMPER_* / IMAGE_BUMPER_* org credential 削除、
+  agiletec-image-bumper App はアンインストール。
 
 ## References
 
