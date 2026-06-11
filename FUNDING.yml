@@ -1,7 +1,6 @@
-# GitHub Sponsors & Funding Links
+# Org-wide funding Source of Truth — inherited by every agiletec-inc repo
+# that has no FUNDING.yml of its own (GitHub default community health file).
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
-
+#
+# Single channel: GitHub Sponsors (one dashboard, one-time + monthly tiers).
 github: agiletec-inc
-patreon: agiletec
-ko_fi: agiletec
-custom: ["https://buymeacoffee.com/agiletec"]
