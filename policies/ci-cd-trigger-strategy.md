@@ -24,7 +24,7 @@ machine) should link here, not duplicate.
 | Stage | Trigger | Effect | Failure isolation |
 |---|---|---|---|
 | CI (品質ゲート) | `on: pull_request` | lint / test / build。Required checks (`ci / ci`, `secret-scan / scan`) が merge をブロック | 詰まり = merge 不可で即可視。デプロイには波及しない |
-| Stage deploy | `on: push: branches: [main]` (paths-filtered) + `workflow_dispatch` | デプロイスクリプト実行 (例: airis-studio = ホスト常駐 runner で nerdctl direct-bake `:stg` → `kubectl rollout restart`) | 失敗は workflow run に出る。スクリプト手実行で即復旧可 |
+| Stage deploy | `on: push: branches: [main]` (paths-filtered) + `workflow_dispatch` | デプロイスクリプト実行 (例: airis-studio = 既存 ARC runner で nerdctl direct-bake `:stg` → `kubectl rollout restart`。workflow pod に containerd socket を hostPath マウント) | 失敗は workflow run に出る。スクリプト手実行(サーバー上)で即復旧可 |
 | Production deploy | `workflow_dispatch` + `environment: prd` (required reviewers) / 手動運用 | 運用者の明示アクションでのみ prd へ | Reviewer absent = no prod deploy |
 
 ### Single-environment 運用 (個人ツール tier)
@@ -125,9 +125,9 @@ not optional decoration.
 > checklist live in the companion doc
 > [`ci-cd-standardization-status.md`](./ci-cd-standardization-status.md).
 
-- **airis-studio**: merge=deploy レーン稼働 (deploy-stg.yml + ホスト常駐 runner
-  + nerdctl direct-bake)。bump PR / 耐久マージャは撤去済み。stg=本番の
-  single-environment 運用。
+- **airis-studio**: merge=deploy レーン稼働 (deploy-stg.yml、既存 ARC runner
+  + nerdctl direct-bake。ホスト常駐物ゼロ)。bump PR / 耐久マージャは撤去済み。
+  stg=本番の single-environment 運用。
 - **agiletec**: CF Workers (corporate/dashboard) は main push → wrangler deploy
   (ARC) で stg 自動。k3s stg ワーカー (airis-agent 等) は旧 bump PR 方式が残存
   — Phase 2 で direct レーンに移行予定 (それまで bump PR は手動マージ)。prd は
