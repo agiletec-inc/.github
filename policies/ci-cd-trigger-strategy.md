@@ -9,33 +9,33 @@ machine) should link here, not duplicate.
 
 ## Goals
 
-1. **`main` is always shippable.** Code lands via PR + Required checks. Direct push is banned by the Org Ruleset "Main Branch Protection".
-2. **`main` push builds, but does not deploy.** Image artifacts are produced for every merge; deployment is a separate, deliberate act.
-3. **Stage deploy = GitHub Release `published`.** Cutting a Release is the engineer's explicit "this commit is ready for stg" declaration.
-4. **Production deploy = GitHub Environment with required reviewers.** No bespoke approval scripts; use the built-in `environment:` protection rule.
-5. **Apps without a Release stay out of stg/prd automatically.** Work-in-progress apps don't need feature flags or special-casing — just don't cut a tag.
+(2026-06-12 改定: 旧 release-driven stg deploy 標準と plan 520 は **supersede**。
+1人法人 + 自宅単一クラスタに対し、デプロイチェーンの段数そのものが最大の
+故障source だったため「merge = stg deploy」に簡素化。)
+
+1. **`main` is always shippable.** Code lands via PR + Required checks. Direct push is banned by the Org Ruleset "Main Branch Protection". **CI required checks は品質ゲートとして不変** — ここがコーディングエージェント (Claude Code) の防波堤。
+2. **Stage deploy = `main` push 直デプロイ。** merge された瞬間に stg に出る。中間機械 (bump PR / 耐久マージャ / release tag) を挟まない。デプロイの実行体は GA workflow 1 本 + デプロイスクリプト 1 本で、スクリプトは手動実行の脱出ハッチを兼ねる。
+3. **Production deploy = 手動のみ。** `workflow_dispatch` + `environment: prd`(required reviewers)か、運用者の手作業。stg からの自動昇格はしない。
+4. **ArgoCD はインフラ + Deployment 構造の reconcile 専任。** image の中身はデプロイレーンが直接届ける (固定 mutable タグ、git 外)。image tag churn を GitOps に流さない。
+5. **Release tag は public OSS の配布物にだけ使う**(cmd-ime の Homebrew 配布等)。デプロイのトリガーには使わない。
 
 ## Trigger map
 
 | Stage | Trigger | Effect | Failure isolation |
 |---|---|---|---|
-| Build | `on: push: branches: [main]` (paths-filtered) | Image build + push to registry. No deploy. | Build break visible on the merge commit itself; can't silently rot in deploy land |
-| Stage deploy | `on: release: types: [published]` | Bump `values/stg.yaml` `image.tag` in the deploy repo (cross-repo PR) → auto-merge → ArgoCD reconciles | Release with bad tag never matches dispatcher → early exit |
-| Production deploy | Same workflow, `environment: prd` declared | Job pauses on `environment` review gate until a required reviewer approves, then bumps `values/prd.yaml` | Reviewer absent = no prod deploy. No accidental promotion |
+| CI (品質ゲート) | `on: pull_request` | lint / test / build。Required checks (`ci / ci`, `secret-scan / scan`) が merge をブロック | 詰まり = merge 不可で即可視。デプロイには波及しない |
+| Stage deploy | `on: push: branches: [main]` (paths-filtered) + `workflow_dispatch` | デプロイスクリプト実行 (例: airis-studio = ホスト常駐 runner で nerdctl direct-bake `:stg` → `kubectl rollout restart`) | 失敗は workflow run に出る。スクリプト手実行で即復旧可 |
+| Production deploy | `workflow_dispatch` + `environment: prd` (required reviewers) / 手動運用 | 運用者の明示アクションでのみ prd へ | Reviewer absent = no prod deploy |
 
-### Tag naming convention
+### Single-environment 運用 (個人ツール tier)
 
-`<app>-vMAJOR.MINOR.PATCH[-suffix]`. Examples:
+airis-studio のような operator=利用者 のツールは **stg が本番**(別 prd を持たない)。
+namespace 分離・CI ゲート・自動デプロイはフル装備のまま、環境を 1 つに畳む。
 
-- `airis-agent-v1.4.2`
-- `airis-evidence-script-v2.0.0-rc.1`
-- `cmd-ime-v0.7.0`
+### Release tag (public OSS 配布物のみ)
 
-The workflow extracts `<app>` and `<version>` with bash `BASH_REMATCH`
-against an allowlist of known app names. Unknown app → `::error::`,
-no bump attempted. Tag parsers using `sed` / `cut` / `awk` are brittle
-against hyphenated app names (`bid-alert`, `evidence-script`); use
-regex with explicit alternation.
+`<app>-vMAJOR.MINOR.PATCH[-suffix]`(例: `cmd-ime-v0.7.0`)。配布物
+(Homebrew cask、バイナリ)の公開トリガーであり、デプロイとは無関係。
 
 ## Org-wide enforcement model (CI / quality gates)
 
@@ -119,19 +119,22 @@ not optional decoration.
   pattern (`.env`, `.env.local`, `.env.*`, `*.pem`, `*credentials*`)
 - Dependabot enabled (free, default for public)
 
-## Implementation status (2026-05-29)
+## Implementation status (2026-06-12)
 
 > Per-repo adoption status, gap analysis, and the prioritized remediation
 > checklist live in the companion doc
 > [`ci-cd-standardization-status.md`](./ci-cd-standardization-status.md).
 
-- **Public repos**: Already on the release-driven model. `cmd-ime/release.yml`
-  uses `pull_request: types: [closed]` + `merged == true` + `workflow_dispatch`;
-  `airis-mcp-gateway/release.yml` is a dedicated release workflow.
-  Reference implementations.
-- **Private repos**: `agiletec` and `agile-server` still on the legacy
-  "main push → auto-bump → auto-deploy stg" model. Migration to release-driven
-  is tracked in plan `~/.claude/plans/520-reach-bit-alert-auto-squishy-allen.md`.
+- **airis-studio**: merge=deploy レーン稼働 (deploy-stg.yml + ホスト常駐 runner
+  + nerdctl direct-bake)。bump PR / 耐久マージャは撤去済み。stg=本番の
+  single-environment 運用。
+- **agiletec**: CF Workers (corporate/dashboard) は main push → wrangler deploy
+  (ARC) で stg 自動。k3s stg ワーカー (airis-agent 等) は旧 bump PR 方式が残存
+  — Phase 2 で direct レーンに移行予定 (それまで bump PR は手動マージ)。prd は
+  Cloudflare + Supabase、中井手動のみ。
+- **Public repos**: release.yml は配布物の公開用として継続 (cmd-ime /
+  airis-mcp-gateway が参照実装)。
+- **旧 release-driven stg deploy 標準 (plan 520) は superseded** (2026-06-12)。
 
 ## References
 
