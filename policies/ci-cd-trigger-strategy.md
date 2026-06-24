@@ -16,6 +16,7 @@ machine) should link here, not duplicate.
 1. **`main` is always shippable.** Code lands via PR + Required checks. Direct push is banned by the Org Ruleset "Main Branch Protection". **CI required checks は品質ゲートとして不変** — ここがコーディングエージェント (Claude Code) の防波堤。
 2. **Stage deploy = `main` push 直デプロイ。** merge された瞬間に stg に出る。中間機械 (bump PR / 耐久マージャ / release tag) を挟まない。デプロイの実行体は GA workflow 1 本 + デプロイスクリプト 1 本で、スクリプトは手動実行の脱出ハッチを兼ねる。
 3. **Production deploy = 手動のみ。** `workflow_dispatch` + `environment: prd`(required reviewers)か、運用者の手作業。stg からの自動昇格はしない。
+   - **例外: agiletec Supabase (migrations + Edge Functions) は main マージで CI 自動 deploy。** `deploy-supabase.yml` が `push:[main]`(`supabase/**` paths) で起動し、drift gate (`migration list --linked` で prd の REMOTE-only migration を検出して fail) → `db push` → `functions deploy` → post-deploy probe。承認ボタンには依存しない(Team-private では required reviewers が不発)。安全担保は PR ゲート (db reset from scratch + pgTAP + monotonic guard) + deploy 時 drift gate。agiletec の CF frontend promote は従来どおり手動。
 4. **ArgoCD はインフラ + Deployment 構造の reconcile 専任。** image の中身はデプロイレーンが直接届ける (固定 mutable タグ、git 外)。image tag churn を GitOps に流さない。
 5. **Release tag は public OSS の配布物にだけ使う**(cmd-ime の Homebrew 配布等)。デプロイのトリガーには使わない。
 
@@ -131,7 +132,8 @@ not optional decoration.
 - **agiletec**: CF Workers (corporate/dashboard) は main push → wrangler deploy
   (ARC) で stg 自動。k3s レーンは廃止済み (agile-server #400 で manifests 全削除、
   bump 機械と bumper App credential も 2026-06-12 に全撤去)。prd は
-  Cloudflare + Supabase、中井手動のみ。
+  Cloudflare (frontend promote = 中井手動) + Supabase (migrations / Edge
+  Functions = main マージで CI 自動 deploy・drift gate 付き、上記 §3 例外)。
 - **Public repos**: release.yml は配布物の公開用として継続 (cmd-ime /
   airis-mcp-gateway が参照実装)。
 - **旧 release-driven stg deploy 標準 (plan 520) は superseded** (2026-06-12)。
