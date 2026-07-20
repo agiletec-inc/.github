@@ -34,6 +34,7 @@ jobs:
         env:
           PATTERNS_FILE: ${{ inputs.patterns-file }}
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           python3 - <<'PY'
           import os
           import re
