@@ -4,6 +4,10 @@
 `.airis/flags.toml` succeeds without a feature-flag check. Repositories that
 declare flags own their flag metadata and the two test commands below.
 
+The organization ruleset enforces `.github/workflows/org-quality-gate.yml`.
+It has `pull_request` and `merge_group` triggers and delegates to this reusable
+quality gate; callers must not add path filters to their own quality workflow.
+
 ```toml
 [[flags]]
 key = "checkout.v2"
