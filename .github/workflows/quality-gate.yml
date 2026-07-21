@@ -28,6 +28,7 @@ jobs:
       node: ${{ steps.detect.outputs.node }}
       bun: ${{ steps.detect.outputs.bun }}
       python: ${{ steps.detect.outputs.python }}
+      python_directory: ${{ steps.detect.outputs.python_directory }}
       rust: ${{ steps.detect.outputs.rust }}
       swift: ${{ steps.detect.outputs.swift }}
       swift_directory: ${{ steps.detect.outputs.swift_directory }}
@@ -47,6 +48,7 @@ jobs:
           node=false
           bun=false
           python=false
+          python_directory=.
           rust=false
           swift=false
           swift_directory=.
@@ -57,7 +59,23 @@ jobs:
               node=true
             fi
           fi
-          if has_root_file pyproject.toml || has_root_file setup.py || has_root_file requirements.txt; then python=true; fi
+          if has_root_file pyproject.toml || has_root_file setup.py || has_root_file requirements.txt; then
+            python=true
+          elif [ -f apps/api/pyproject.toml ]; then
+            python=true
+            python_directory=apps/api
+          else
+            python_project="$(find . -maxdepth 3 \
+              -path '*/.git' -prune -o \
+              -path '*/.venv' -prune -o \
+              -path '*/node_modules' -prune -o \
+              -type f -name pyproject.toml \
+              -print -quit)"
+            if [ -n "$python_project" ]; then
+              python=true
+              python_directory="$(dirname "$python_project")"
+            fi
+          fi
           has_root_file Cargo.toml && rust=true
           swift_project="$(find . -maxdepth 3 \
             -path '*/.git' -prune -o \
@@ -78,12 +96,13 @@ jobs:
             echo "node=$node"
             echo "bun=$bun"
             echo "python=$python"
+            echo "python_directory=$python_directory"
             echo "rust=$rust"
             echo "swift=$swift"
             echo "swift_directory=$swift_directory"
             echo "supported=$supported"
           } >> "$GITHUB_OUTPUT"
-          printf 'node=%s\nbun=%s\npython=%s\nrust=%s\nswift=%s\nswift_directory=%s\nsupported=%s\n' "$node" "$bun" "$python" "$rust" "$swift" "$swift_directory" "$supported"
+          printf 'node=%s\nbun=%s\npython=%s\npython_directory=%s\nrust=%s\nswift=%s\nswift_directory=%s\nsupported=%s\n' "$node" "$bun" "$python" "$python_directory" "$rust" "$swift" "$swift_directory" "$supported"
 
   node-ci:
     name: node-ci
@@ -109,6 +128,7 @@ jobs:
     with:
       runs-on: ${{ inputs.linux-runs-on }}
       tool: auto
+      working-directory: ${{ needs.detect.outputs.python_directory }}
 
   rust-ci:
     name: rust-ci
