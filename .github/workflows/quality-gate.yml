@@ -153,9 +153,15 @@ jobs:
     with:
       runs-on: ${{ inputs.linux-runs-on }}
 
+  feature-flag-check:
+    name: feature-flag-check
+    uses: ./.github/workflows/feature-flag-check.yml
+    with:
+      runs-on: ${{ inputs.linux-runs-on }}
+
   quality-gate:
     name: quality-gate
-    needs: [detect, node-ci, bun-ci, python-ci, rust-ci, swift-ci, secret-scan]
+    needs: [detect, node-ci, bun-ci, python-ci, rust-ci, swift-ci, secret-scan, feature-flag-check]
     if: ${{ always() }}
     runs-on: ${{ inputs.linux-runs-on }}
     container:
