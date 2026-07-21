@@ -7,6 +7,8 @@ declare flags own their flag metadata and the two test commands below.
 The organization ruleset enforces `.github/workflows/org-quality-gate.yml`.
 It has `pull_request` and `merge_group` triggers and delegates to this reusable
 quality gate; callers must not add path filters to their own quality workflow.
+Repositories without one of the supported language manifests still receive the
+secret and feature-flag gates; their language-specific jobs are skipped.
 
 ```toml
 [[flags]]

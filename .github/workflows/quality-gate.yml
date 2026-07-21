@@ -177,10 +177,6 @@ jobs:
             .filter(([, result]) => result.result === 'failure' || result.result === 'cancelled')
             .map(([name, result]) => `${name}=${result.result}`);
 
-          if (needs.detect?.result === 'success' && needs.detect.outputs?.supported !== 'true') {
-            failed.push('detect=unsupported repository layout');
-          }
-
           if (failed.length > 0) {
             console.error(`Quality gate failed: ${failed.join(', ')}`);
             process.exit(1);
