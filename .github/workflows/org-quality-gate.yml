@@ -15,5 +15,5 @@ jobs:
     name: quality-gate
     uses: agiletec-inc/.github/.github/workflows/quality-gate.yml@main
     with:
-      linux-runs-on: ubuntu-latest
-      swift-runs-on: macos-latest
+      linux-runs-on: agiletec-ci-runner
+      swift-runs-on: agiletec-ci-runner
