@@ -19,6 +19,8 @@ jobs:
   ci:
     name: ci
     runs-on: ${{ inputs.runs-on }}
+    container:
+      image: node:26-bookworm
     timeout-minutes: 20
     permissions:
       contents: read
