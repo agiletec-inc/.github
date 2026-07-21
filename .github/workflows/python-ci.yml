@@ -103,18 +103,20 @@ jobs:
           COV: ${{ inputs.cov-fail-under }}
         run: |
           set -euo pipefail
-          pytest_args=""
-          [ -n "$COV" ] && pytest_args="--cov --cov-report=term-missing --cov-fail-under=$COV"
+          pytest_args=()
+          if [ -n "$COV" ]; then
+            pytest_args=(--cov --cov-report=term-missing --cov-fail-under="$COV")
+          fi
           if [ -n "$OVERRIDE" ]; then
             eval "$OVERRIDE"
           elif [ "$TOOL" = "uv" ]; then
             uv run ruff check .
             uv run ruff format --check .
-            uv run pytest $pytest_args
+            uv run pytest "${pytest_args[@]}"
           else
             ruff check .
             ruff format --check .
-            pytest $pytest_args
+            pytest "${pytest_args[@]}"
           fi
       - name: Security checks
         if: inputs.security-checks
