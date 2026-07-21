@@ -25,6 +25,10 @@ on:
         description: Package manager — auto (uv.lock present => uv, else pip) | uv | pip
         type: string
         default: auto
+      working-directory:
+        description: Repository-relative directory containing the Python project
+        type: string
+        default: .
       install-command:
         description: Override install step (empty => derived from tool)
         type: string
@@ -52,6 +56,9 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     permissions:
       contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - name: Resolve tool
@@ -96,18 +103,20 @@ jobs:
           COV: ${{ inputs.cov-fail-under }}
         run: |
           set -euo pipefail
-          pytest_args=""
-          [ -n "$COV" ] && pytest_args="--cov --cov-report=term-missing --cov-fail-under=$COV"
+          pytest_args=()
+          if [ -n "$COV" ]; then
+            pytest_args=(--cov --cov-report=term-missing --cov-fail-under="$COV")
+          fi
           if [ -n "$OVERRIDE" ]; then
             eval "$OVERRIDE"
           elif [ "$TOOL" = "uv" ]; then
             uv run ruff check .
             uv run ruff format --check .
-            uv run pytest $pytest_args
+            uv run pytest "${pytest_args[@]}"
           else
             ruff check .
             ruff format --check .
-            pytest $pytest_args
+            pytest "${pytest_args[@]}"
           fi
       - name: Security checks
         if: inputs.security-checks
