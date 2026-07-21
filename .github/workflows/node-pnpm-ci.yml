@@ -64,6 +64,9 @@ jobs:
     timeout-minutes: ${{ inputs.timeout-minutes }}
     permissions:
       contents: read
+    defaults:
+      run:
+        shell: bash
     env:
       PM: ''  # set by Detect step
     steps:
