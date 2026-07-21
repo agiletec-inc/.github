@@ -17,3 +17,7 @@ jobs:
     with:
       linux-runs-on: ${{ github.event.repository.private && 'agiletec-ci-runner' || 'ubuntu-latest' }}
       swift-runs-on: macos-latest
+      # agiletec has its own repository-required canonical CI. Keep the
+      # organization security/feature-flag/final gates, but do not run the
+      # generic language jobs a second time.
+      stack-checks: ${{ github.repository != 'agiletec-inc/agiletec' }}
