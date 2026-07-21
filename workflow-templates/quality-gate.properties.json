@@ -1,0 +1,7 @@
+{
+  "name": "Organization quality gate — agiletec-inc",
+  "description": "Automatically detects supported stacks and runs the centralized quality gate.",
+  "iconName": "checklist",
+  "categories": ["Continuous integration", "Quality"],
+  "filePattern": "quality-gate.yml"
+}

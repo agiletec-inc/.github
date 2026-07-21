@@ -1,0 +1,19 @@
+name: Organization quality gate
+
+# Keep this caller identical across repositories. The reusable workflow decides
+# which stack-specific jobs apply; do not add workflow-level path filters.
+on:
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: quality-gate-${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    uses: agiletec-inc/.github/.github/workflows/quality-gate.yml@main
+    with:
+      linux-runs-on: ${{ github.repository_visibility == 'private' && 'agiletec-self-hosted-runner' || 'ubuntu-latest' }}
+      swift-runs-on: ${{ github.repository_visibility == 'private' && 'agiletec-self-hosted-runner' || 'macos-latest' }}
