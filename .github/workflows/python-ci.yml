@@ -54,7 +54,7 @@ jobs:
     name: ci
     runs-on: ${{ inputs.runs-on }}
     container:
-      image: node:26-bookworm
+      image: python:${{ inputs.python-version }}-bookworm
     timeout-minutes: ${{ inputs.timeout-minutes }}
     permissions:
       contents: read
@@ -74,9 +74,21 @@ jobs:
           fi
           echo "tool=$tool" >> "$GITHUB_OUTPUT"
           echo "Resolved package manager: $tool"
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: ${{ inputs.python-version }}
+      - name: Verify Python runtime
+        run: |
+          set -euo pipefail
+          python --version
+          python - <<'PY'
+          import os
+          import sys
+
+          expected = os.environ['EXPECTED_PYTHON'].split('.')[:2]
+          actual = [str(sys.version_info.major), str(sys.version_info.minor)]
+          if actual != expected:
+              raise SystemExit(f'Python {".".join(actual)} != requested {".".join(expected)}')
+          PY
+        env:
+          EXPECTED_PYTHON: ${{ inputs.python-version }}
       - name: Setup uv
         if: steps.tool.outputs.tool == 'uv'
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
