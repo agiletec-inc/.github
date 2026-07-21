@@ -73,6 +73,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 2
+      - uses: denoland/setup-deno@v2
       - name: Allow Git to operate on the workspace
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Detect package manager
