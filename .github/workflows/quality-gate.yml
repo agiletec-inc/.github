@@ -14,10 +14,6 @@ on:
         description: macOS runner label for Swift quality jobs
         type: string
         default: macos-latest
-      stack-checks:
-        description: Run generic language-stack jobs; disable only when repository-native required CI owns them
-        type: boolean
-        default: true
 
 permissions:
   contents: read
@@ -39,7 +35,6 @@ jobs:
       swift: ${{ steps.detect.outputs.swift }}
       swift_directory: ${{ steps.detect.outputs.swift_directory }}
       supported: ${{ steps.detect.outputs.supported }}
-      stack_checks: ${{ steps.detect.outputs.stack_checks }}
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - id: detect
@@ -61,7 +56,6 @@ jobs:
           rust=false
           swift=false
           swift_directory=.
-          stack_checks='${{ inputs.stack-checks }}'
           if has_root_file package.json; then
             if has_root_file bun.lock || has_root_file bun.lockb; then
               bun=true
@@ -124,14 +118,13 @@ jobs:
             echo "swift=$swift"
             echo "swift_directory=$swift_directory"
             echo "supported=$supported"
-            echo "stack_checks=$stack_checks"
           } >> "$GITHUB_OUTPUT"
-          printf 'node=%s\nnode_version=%s\nnode_run_command=%s\nbun=%s\npython=%s\npython_directory=%s\nrust=%s\nswift=%s\nswift_directory=%s\nsupported=%s\nstack_checks=%s\n' "$node" "$node_version" "$node_run_command" "$bun" "$python" "$python_directory" "$rust" "$swift" "$swift_directory" "$supported" "$stack_checks"
+          printf 'node=%s\nnode_version=%s\nnode_run_command=%s\nbun=%s\npython=%s\npython_directory=%s\nrust=%s\nswift=%s\nswift_directory=%s\nsupported=%s\n' "$node" "$node_version" "$node_run_command" "$bun" "$python" "$python_directory" "$rust" "$swift" "$swift_directory" "$supported"
 
   node-ci:
     name: node-ci
     needs: detect
-    if: ${{ needs.detect.outputs.stack_checks == 'true' && needs.detect.outputs.node == 'true' }}
+    if: ${{ needs.detect.outputs.node == 'true' }}
     uses: ./.github/workflows/node-pnpm-ci.yml
     with:
       runs-on: ${{ inputs.linux-runs-on }}
@@ -141,7 +134,7 @@ jobs:
   bun-ci:
     name: bun-ci
     needs: detect
-    if: ${{ needs.detect.outputs.stack_checks == 'true' && needs.detect.outputs.bun == 'true' }}
+    if: ${{ needs.detect.outputs.bun == 'true' }}
     uses: ./.github/workflows/bun-ci.yml
     with:
       runs-on: ${{ inputs.linux-runs-on }}
@@ -149,7 +142,7 @@ jobs:
   python-ci:
     name: python-ci
     needs: detect
-    if: ${{ needs.detect.outputs.stack_checks == 'true' && needs.detect.outputs.python == 'true' }}
+    if: ${{ needs.detect.outputs.python == 'true' }}
     uses: ./.github/workflows/python-ci.yml
     with:
       runs-on: ${{ inputs.linux-runs-on }}
@@ -159,7 +152,7 @@ jobs:
   rust-ci:
     name: rust-ci
     needs: detect
-    if: ${{ needs.detect.outputs.stack_checks == 'true' && needs.detect.outputs.rust == 'true' }}
+    if: ${{ needs.detect.outputs.rust == 'true' }}
     uses: ./.github/workflows/rust-cargo-ci.yml
     with:
       runs-on: ${{ inputs.linux-runs-on }}
@@ -167,7 +160,7 @@ jobs:
   swift-ci:
     name: swift-ci
     needs: detect
-    if: ${{ needs.detect.outputs.stack_checks == 'true' && needs.detect.outputs.swift == 'true' }}
+    if: ${{ needs.detect.outputs.swift == 'true' }}
     uses: ./.github/workflows/swift-ci.yml
     with:
       runs-on: ${{ inputs.swift-runs-on }}

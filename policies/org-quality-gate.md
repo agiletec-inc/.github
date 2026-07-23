@@ -1,11 +1,10 @@
 # Organization quality gate contract
 
-The organization-required workflow always runs its secret scan, feature-flag check, and final
-aggregator. A repository that already enforces language and build gates in its own required CI may
-be listed centrally in `org-quality-gate.yml` with `stack-checks: false`. This prevents duplicate
-generic Node, Bun, Python, Rust, and Swift jobs.
+The organization-required workflow runs the same gate for every repository: stack detection picks
+the applicable generic language jobs (Node, Bun, Python, Rust, Swift), and the secret scan,
+feature-flag check, and final aggregator always run.
 
-The exception is controlled in this repository, not by files from the pull request under test, so
-a product-repository pull request cannot exempt itself. Before adding an exception, verify that the
-repository ruleset requires its native canonical CI. The exception never disables the
-organization-wide security checks or final aggregator.
+There is no per-repository exception mechanism (owner ruling 2026-07-24). A repository with its own
+native CI still runs the generic stack jobs; duplication is accepted in exchange for a single
+uniform gate. Do not reintroduce repository-name conditions or opt-out inputs into
+`org-quality-gate.yml` / `quality-gate.yml`.
