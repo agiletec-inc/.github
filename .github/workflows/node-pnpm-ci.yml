@@ -74,6 +74,10 @@ jobs:
         with:
           fetch-depth: 2
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+      # A repo's aggregate check script may shell out to Python sub-projects
+      # managed with uv (e.g. agiletec's `check:reach`); the node container
+      # image does not ship it.
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
       - name: Allow Git to operate on the workspace
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Detect package manager
