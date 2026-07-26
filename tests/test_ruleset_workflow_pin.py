@@ -14,7 +14,7 @@ from typing import Any
 ROOT = Path(__file__).parents[1]
 SCRIPT = ROOT / "scripts/update_required_workflow_pin.py"
 PROPOSED_SHA = "a" * 40
-CANARY_HEAD_SHA = "b" * 40
+CANARY_HEAD_SHA = PROPOSED_SHA
 RULESET_PATH = "/orgs/agiletec-inc/rulesets/19456040"
 
 
@@ -79,10 +79,9 @@ class FakeGitHub:
         self.invalid_json_path: str | None = None
         self.compare_status = "ahead"
         self.canary_conclusion: str | None = "success"
-        self.canary_check_name = "quality-gate / quality-gate"
-        self.canary_ruleset_sha = PROPOSED_SHA
-        self.canary_workflow_path = ".github/workflows/org-quality-gate.yml"
-        self.canary_provenance_sha = PROPOSED_SHA
+        self.canary_check_name = "test"
+        self.canary_workflow_path = ".github/workflows/ci.yml"
+        self.canary_run_head_sha = CANARY_HEAD_SHA
         self.requests: list[dict[str, Any]] = []
         fixture = self
 
@@ -128,7 +127,7 @@ class FakeGitHub:
                     f"/repos/agiletec-inc/github-actions/compare/{PROPOSED_SHA}...main"
                 ):
                     self.send_json(200, {"status": fixture.compare_status})
-                elif self.path == "/repos/agiletec-inc/agiletec/pulls/321":
+                elif self.path == "/repos/agiletec-inc/github-actions/pulls/321":
                     self.send_json(
                         200,
                         {
@@ -138,7 +137,7 @@ class FakeGitHub:
                         },
                     )
                 elif self.path == (
-                    f"/repos/agiletec-inc/agiletec/commits/{CANARY_HEAD_SHA}/check-runs"
+                    f"/repos/agiletec-inc/github-actions/commits/{CANARY_HEAD_SHA}/check-runs"
                     "?filter=latest&per_page=100"
                 ):
                     self.send_json(
@@ -152,59 +151,18 @@ class FakeGitHub:
                                     else "in_progress",
                                     "conclusion": fixture.canary_conclusion,
                                     "app": {"slug": "github-actions"},
-                                    "details_url": "https://api.github.test/repos/agiletec-inc/agiletec/actions/runs/777",
+                                    "details_url": "https://api.github.test/repos/agiletec-inc/github-actions/actions/runs/777",
                                 }
                             ]
                         },
                     )
-                elif self.path == "/repos/agiletec-inc/agiletec/rulesets":
-                    self.send_json(
-                        200,
-                        [
-                            {
-                                "id": 7654,
-                                "name": "Candidate Org quality gate",
-                            }
-                        ],
-                    )
-                elif self.path == "/repos/agiletec-inc/agiletec/rulesets/7654":
-                    self.send_json(
-                        200,
-                        {
-                            "id": 7654,
-                            "name": "Candidate Org quality gate",
-                            "enforcement": "active",
-                            "rules": [
-                                {
-                                    "type": "workflows",
-                                    "parameters": {
-                                        "workflows": [
-                                            {
-                                                "repository_id": 9001,
-                                                "path": ".github/workflows/org-quality-gate.yml",
-                                                "ref": "refs/heads/main",
-                                                "sha": fixture.canary_ruleset_sha,
-                                            }
-                                        ]
-                                    },
-                                }
-                            ],
-                        },
-                    )
-                elif self.path == "/repos/agiletec-inc/agiletec/actions/runs/777":
+                elif self.path == "/repos/agiletec-inc/github-actions/actions/runs/777":
                     self.send_json(
                         200,
                         {
                             "id": 777,
-                            "head_sha": CANARY_HEAD_SHA,
+                            "head_sha": fixture.canary_run_head_sha,
                             "path": fixture.canary_workflow_path,
-                            "referenced_workflows": [
-                                {
-                                    "path": "agiletec-inc/github-actions/.github/workflows/quality-gate.yml@main",
-                                    "sha": fixture.canary_provenance_sha,
-                                    "ref": "refs/heads/main",
-                                }
-                            ],
                         },
                     )
                 elif self.path == RULESET_PATH:
@@ -347,7 +305,7 @@ class RulesetWorkflowPinTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(api.puts(), [])
 
-    def test_requires_successful_central_aggregate_on_canary_head(self) -> None:
+    def test_requires_successful_repository_native_test_on_canary_head(self) -> None:
         for conclusion in (None, "failure", "cancelled"):
             with self.subTest(conclusion=conclusion), FakeGitHub() as api:
                 api.canary_conclusion = conclusion
@@ -355,11 +313,11 @@ class RulesetWorkflowPinTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(api.puts(), [])
 
-    def test_canary_ruleset_and_workflow_provenance_must_match_candidate(self) -> None:
+    def test_canary_check_and_workflow_run_must_match_candidate(self) -> None:
         cases = (
-            ("canary_ruleset_sha", "d" * 40),
+            ("canary_check_name", "spoofed-check"),
             ("canary_workflow_path", ".github/workflows/spoof.yml"),
-            ("canary_provenance_sha", "e" * 40),
+            ("canary_run_head_sha", "e" * 40),
         )
         for attribute, value in cases:
             with self.subTest(attribute=attribute), FakeGitHub() as api:

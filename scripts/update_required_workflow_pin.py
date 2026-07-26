@@ -14,11 +14,11 @@ from typing import Any
 
 ORGANIZATION = "agiletec-inc"
 SOURCE_REPOSITORY = "github-actions"
-CANARY_REPOSITORY = "agiletec"
+CANARY_REPOSITORY = "github-actions"
 RULESET_ID = 19456040
 TARGET_WORKFLOW = ".github/workflows/org-quality-gate.yml"
-IMPLEMENTATION_WORKFLOW = ".github/workflows/quality-gate.yml"
-CANARY_RULESET_NAME = "Candidate Org quality gate"
+CANARY_WORKFLOW = ".github/workflows/ci.yml"
+CANARY_CHECK = "test"
 UPDATE_FIELDS = (
     "name",
     "target",
@@ -156,9 +156,7 @@ def validate_source_candidate(api: GitHubApi, proposed_sha: str) -> int:
     return repository_id
 
 
-def validate_canary(
-    api: GitHubApi, canary_pr: int, proposed_sha: str, repository_id: int
-) -> None:
+def validate_canary(api: GitHubApi, canary_pr: int, proposed_sha: str) -> None:
     pull = api.get_object(
         f"/repos/{ORGANIZATION}/{CANARY_REPOSITORY}/pulls/{canary_pr}"
     )
@@ -173,6 +171,8 @@ def validate_canary(
     ):
         raise UpdateError("Canary pull request has an invalid base or head")
     head_sha = require_string(head, "sha", "canary pull request head")
+    if head_sha != proposed_sha:
+        raise UpdateError("Canary pull request head does not match the proposed SHA")
     checks = api.get_object(
         f"/repos/{ORGANIZATION}/{CANARY_REPOSITORY}/commits/{head_sha}/check-runs"
         "?filter=latest&per_page=100"
@@ -184,59 +184,29 @@ def validate_canary(
         check
         for check in check_runs
         if isinstance(check, dict)
-        and check.get("name") in {"quality-gate", "quality-gate / quality-gate"}
+        and check.get("name") == CANARY_CHECK
         and isinstance(check.get("app"), dict)
         and check["app"].get("slug") == "github-actions"
     ]
     if len(aggregate) != 1:
-        raise UpdateError(
-            f"Expected one canary aggregate check, found {len(aggregate)}"
-        )
+        raise UpdateError(f"Expected one canary check, found {len(aggregate)}")
     if (
         aggregate[0].get("status") != "completed"
         or aggregate[0].get("conclusion") != "success"
     ):
-        raise UpdateError("Canary aggregate check is not successful")
-    details_url = require_string(aggregate[0], "details_url", "canary aggregate check")
+        raise UpdateError("Canary check is not successful")
+    details_url = require_string(aggregate[0], "details_url", "canary check")
     run_match = re.search(r"/actions/runs/(\d+)(?:/|$)", details_url)
     if run_match is None:
-        raise UpdateError("Canary aggregate check has no workflow run URL")
-
-    rulesets = api.get_array(f"/repos/{ORGANIZATION}/{CANARY_REPOSITORY}/rulesets")
-    candidates = [
-        item
-        for item in rulesets
-        if isinstance(item, dict) and item.get("name") == CANARY_RULESET_NAME
-    ]
-    if len(candidates) != 1:
-        raise UpdateError(f"Expected one canary Ruleset, found {len(candidates)}")
-    canary_ruleset_id = require_integer(candidates[0], "id", "canary Ruleset")
-    canary_ruleset = api.get_object(
-        f"/repos/{ORGANIZATION}/{CANARY_REPOSITORY}/rulesets/{canary_ruleset_id}"
-    )
-    if canary_ruleset.get("enforcement") != "active":
-        raise UpdateError("Canary Ruleset is not active")
-    if find_target_workflow(canary_ruleset, repository_id).get("sha") != proposed_sha:
-        raise UpdateError("Canary Ruleset does not pin the proposed SHA")
+        raise UpdateError("Canary check has no workflow run URL")
 
     run = api.get_object(
         f"/repos/{ORGANIZATION}/{CANARY_REPOSITORY}/actions/runs/{run_match.group(1)}"
     )
-    if run.get("head_sha") != head_sha or run.get("path") != TARGET_WORKFLOW:
+    if run.get("head_sha") != head_sha or run.get("path") != CANARY_WORKFLOW:
         raise UpdateError(
             "Canary workflow run does not match the pull request head or path"
         )
-    referenced = run.get("referenced_workflows")
-    if not isinstance(referenced, list):
-        raise UpdateError("Canary workflow run has no provenance")
-    expected_path = f"{ORGANIZATION}/{SOURCE_REPOSITORY}/{IMPLEMENTATION_WORKFLOW}@main"
-    provenance = [
-        item
-        for item in referenced
-        if isinstance(item, dict) and item.get("path") == expected_path
-    ]
-    if len(provenance) != 1 or provenance[0].get("sha") != proposed_sha:
-        raise UpdateError("Canary workflow provenance does not match the proposed SHA")
 
 
 def main() -> int:
@@ -256,7 +226,7 @@ def main() -> int:
 
     api = GitHubApi(args.api_base_url, token)
     repository_id = validate_source_candidate(api, args.proposed_sha)
-    validate_canary(api, args.canary_pr, args.proposed_sha, repository_id)
+    validate_canary(api, args.canary_pr, args.proposed_sha)
     ruleset_path = f"/orgs/{ORGANIZATION}/rulesets/{RULESET_ID}"
     initial = api.get_object(ruleset_path)
     desired = update_payload(initial, repository_id, args.proposed_sha)
