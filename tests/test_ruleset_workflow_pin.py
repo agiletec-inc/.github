@@ -80,6 +80,8 @@ class FakeGitHub:
         self.compare_status = "ahead"
         self.canary_conclusion: str | None = "success"
         self.canary_check_name = "test"
+        self.canary_state = "closed"
+        self.canary_merged_at: str | None = "2026-07-26T15:27:02Z"
         self.canary_workflow_path = ".github/workflows/ci.yml"
         self.canary_run_head_sha = CANARY_HEAD_SHA
         self.requests: list[dict[str, Any]] = []
@@ -131,7 +133,8 @@ class FakeGitHub:
                     self.send_json(
                         200,
                         {
-                            "state": "open",
+                            "state": fixture.canary_state,
+                            "merged_at": fixture.canary_merged_at,
                             "head": {"sha": CANARY_HEAD_SHA},
                             "base": {"ref": "main"},
                         },
@@ -312,6 +315,14 @@ class RulesetWorkflowPinTests(unittest.TestCase):
                 result = self.run_update(api)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertEqual(api.puts(), [])
+
+    def test_rejects_closed_unmerged_canary_pull_request(self) -> None:
+        with FakeGitHub() as api:
+            api.canary_merged_at = None
+            result = self.run_update(api)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(api.puts(), [])
 
     def test_canary_check_and_workflow_run_must_match_candidate(self) -> None:
         cases = (

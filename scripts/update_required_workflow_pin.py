@@ -160,8 +160,10 @@ def validate_canary(api: GitHubApi, canary_pr: int, proposed_sha: str) -> None:
     pull = api.get_object(
         f"/repos/{ORGANIZATION}/{CANARY_REPOSITORY}/pulls/{canary_pr}"
     )
-    if pull.get("state") != "open":
-        raise UpdateError("Canary pull request is not open")
+    state = pull.get("state")
+    merged_at = pull.get("merged_at")
+    if state != "open" and not (state == "closed" and isinstance(merged_at, str)):
+        raise UpdateError("Canary pull request is neither open nor merged")
     base = pull.get("base")
     head = pull.get("head")
     if (
