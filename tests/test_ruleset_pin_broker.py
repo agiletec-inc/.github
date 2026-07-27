@@ -167,14 +167,23 @@ class RulesetTests(unittest.TestCase):
             desired["rules"][1]["parameters"]["workflows"][0]["sha"], NEW_SHA
         )
 
-    def test_rejects_unpinned_or_duplicate_target(self):
+    def test_bootstraps_an_unpinned_ref_without_changing_the_ref(self):
         unpinned = ruleset()
         del unpinned["rules"][1]["parameters"]["workflows"][0]["sha"]
+        desired, before = replace_workflow_sha(unpinned, SOURCE_ID, NEW_SHA)
+        workflow = desired["rules"][1]["parameters"]["workflows"][0]
+        self.assertIsNone(before)
+        self.assertEqual(workflow["ref"], WORKFLOW_REF)
+        self.assertEqual(workflow["sha"], NEW_SHA)
+
+    def test_rejects_invalid_sha_or_duplicate_target(self):
+        invalid = ruleset()
+        invalid["rules"][1]["parameters"]["workflows"][0]["sha"] = "main"
         duplicate = ruleset()
         duplicate["rules"][1]["parameters"]["workflows"].append(
             copy.deepcopy(duplicate["rules"][1]["parameters"]["workflows"][0])
         )
-        for value in (unpinned, duplicate):
+        for value in (invalid, duplicate):
             with self.subTest(value=value), self.assertRaises(RejectedProposal):
                 replace_workflow_sha(value, SOURCE_ID, NEW_SHA)
 
@@ -220,6 +229,33 @@ class BrokerTests(unittest.TestCase):
             github.requests[-1][1],
         )
         self.assertEqual(audit.records[0]["github_request_id"], "request-id")
+
+    def test_first_apply_bootstraps_sha_from_a_ref_only_workflow(self):
+        current = ruleset()
+        del current["rules"][1]["parameters"]["workflows"][0]["sha"]
+        audit = FakeAudit()
+        github = FakeGithub(
+            [
+                *canary_responses(),
+                current,
+                current,
+                ruleset(NEW_SHA),
+                ruleset(NEW_SHA),
+            ]
+        )
+
+        result = RulesetBroker(github, audit, SOURCE_ID, True).apply(
+            proposal(), "owner", "test"
+        )
+
+        self.assertEqual(result["status"], "applied")
+        self.assertIsNone(audit.records[0]["before_sha"])
+        put_body = next(
+            body for method, _path, body in github.requests if method == "PUT"
+        )
+        workflow = put_body["rules"][1]["parameters"]["workflows"][0]
+        self.assertEqual(workflow["ref"], WORKFLOW_REF)
+        self.assertEqual(workflow["sha"], NEW_SHA)
 
     def test_conflict_fails_closed_without_put(self):
         changed = ruleset()
@@ -290,14 +326,25 @@ class GithubClientTests(unittest.TestCase):
             return json.dumps(self.value).encode()
 
     @staticmethod
-    def error(status):
+    def error(status, body=b'{"message":"failure"}'):
         return urllib.error.HTTPError(
             "https://api.github.com/test",
             status,
             "failure",
-            {},
-            io.BytesIO(b'{"message":"failure"}'),
+            {"x-github-request-id": "request-id"},
+            io.BytesIO(body),
         )
+
+    def test_uses_the_latest_api_version(self):
+        requests = []
+
+        def opener(request, timeout):
+            self.assertEqual(timeout, 10)
+            requests.append(request)
+            return self.Response({"ok": True})
+
+        GithubClient("secret", opener).request("GET", "/test")
+        self.assertEqual(requests[0].get_header("X-github-api-version"), "2026-03-10")
 
     def test_retries_5xx_then_succeeds(self):
         responses = [self.error(500), self.error(503), self.Response({"ok": True})]
@@ -324,6 +371,21 @@ class GithubClientTests(unittest.TestCase):
             with self.subTest(status=status), self.assertRaises(GithubFailure):
                 GithubClient("secret", opener).request("PUT", "/test", {})
             self.assertEqual(calls, [10])
+
+    def test_422_preserves_response_body_and_request_id(self):
+        def opener(_request, timeout):
+            self.assertEqual(timeout, 10)
+            raise self.error(
+                422,
+                b'{"message":"Validation Failed","errors":[{"field":"rules"}]}',
+            )
+
+        with self.assertRaises(GithubFailure) as failure:
+            GithubClient("secret", opener).request("PUT", "/test", {})
+        message = str(failure.exception)
+        self.assertIn("request_id=request-id", message)
+        self.assertIn("Validation Failed", message)
+        self.assertIn('"field":"rules"', message)
 
     def test_exhausted_5xx_does_not_expose_token(self):
         def opener(_request, timeout):

@@ -133,7 +133,7 @@ def mutation_body(ruleset: dict[str, Any]) -> dict[str, Any]:
 
 def replace_workflow_sha(
     ruleset: dict[str, Any], source_repository_id: int, proposed_sha: str
-) -> tuple[dict[str, Any], str]:
+) -> tuple[dict[str, Any], str | None]:
     body = mutation_body(ruleset)
     matches: list[dict[str, Any]] = []
     for rule in body["rules"]:
@@ -149,8 +149,8 @@ def replace_workflow_sha(
     if len(matches) != 1:
         raise RejectedProposal("fixed required workflow target must occur exactly once")
     current_sha = matches[0].get("sha")
-    if not _is_sha(current_sha):
-        raise RejectedProposal("current required workflow is not SHA pinned")
+    if current_sha is not None and not _is_sha(current_sha):
+        raise RejectedProposal("current required workflow SHA is invalid")
     matches[0]["sha"] = proposed_sha
     return body, current_sha
 
@@ -211,13 +211,15 @@ class GithubClient:
                     )
             except urllib.error.HTTPError as error:
                 try:
-                    detail = error.read().decode(errors="replace")[:500]
+                    detail = error.read().decode(errors="replace")[:4000]
+                    request_id = error.headers.get("x-github-request-id")
                 finally:
                     error.close()
                 if 500 <= error.code < 600 and attempt < 2:
                     continue
                 raise GithubFailure(
-                    f"GitHub API {method} {path} failed with {error.code}: {detail}"
+                    f"GitHub API {method} {path} failed with {error.code}"
+                    f" (request_id={request_id or 'unknown'}): {detail}"
                 ) from error
             except (urllib.error.URLError, TimeoutError) as error:
                 if attempt < 2:
