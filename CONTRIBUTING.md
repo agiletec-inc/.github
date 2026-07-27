@@ -21,7 +21,7 @@ Open source projects developed and maintained by Agiletec Inc.:
 - **[AIRIS MCP Gateway](https://github.com/agiletec-inc/airis-mcp-gateway)** - MCP integrated gateway
 - **[mindbase](https://github.com/agiletec-inc/mindbase)** - AI conversation knowledge management
 - **[superagent](https://github.com/agiletec-inc/superagent)** - Claude Code enhancement framework
-- **[neural](https://github.com/agiletec-inc/neural)** - Local translation tool
+- **[airis-translate](https://github.com/agiletec-inc/airis-translate)** - Native macOS translation tool
 - **[selfhosted-supabase-mcp](https://github.com/agiletec-inc/selfhosted-supabase-mcp)** - Supabase MCP server
 - **[cmd-ime](https://github.com/agiletec-inc/cmd-ime)** - macOS input method switcher
 

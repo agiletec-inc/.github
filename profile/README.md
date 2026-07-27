@@ -47,11 +47,11 @@ AI conversation knowledge management system - fully local, free, and open source
 - **Key Features**: Local AI embeddings, vector search, conversation memory, privacy-first
 - **Status**: 🟢 Active Development
 
-#### **[neural](https://github.com/agiletec-inc/neural)**
-Local translation tool using Ollama for offline markdown translation via Tauri desktop app.
+#### **[airis-translate](https://github.com/agiletec-inc/airis-translate)**
+Native macOS translation app using Ollama for private, offline translation.
 
-- **Tech Stack**: TypeScript, Rust, Tauri, Ollama
-- **Key Features**: Offline translation, markdown support, cross-platform desktop app
+- **Tech Stack**: Swift, SwiftUI, Ollama
+- **Key Features**: DeepL-style quick access, selection translation, translation history
 - **Status**: 🟡 Beta
 
 ---
