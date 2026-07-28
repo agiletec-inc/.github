@@ -8,7 +8,12 @@ AWS Lambda上でGitHub App JWTをKMS `Sign`だけで生成し、organization Rul
 - GitHub App private keyとinstallation tokenは保存・response・auditへ出さない。
 - DynamoDB tableはretain、PITR有効、`audit_id`の条件付きPutItemでappend-onlyにする。
 
-production provisioningは[ADR-0001](../docs/adr/0001-policy-broker-signing-provider.md)のstop conditionが解消するまで行いません。
+署名providerはAWS KMS、runtimeはAWS Lambdaとする。KMS keyはexternal-origin RSA keyで、runtimeへ許可するのは
+`kms:Sign`だけ。long-lived AWS access key、GitHub App private key、installation tokenをlocal Mac、GitHub Actions、
+Doppler、self-hosted runner、AIris VibeOSへ置かない。署名algorithmは`RSASSA_PKCS1_V1_5_SHA_256`に固定する。
+
+AWS account ID、region、billing owner、security contact、CloudTrail保存先がownerにより確定するまでproduction
+provisioningを開始しない。利用不能時はmutationを停止し、local tokenへfallbackしない。
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_ruleset_pin_broker.py'
