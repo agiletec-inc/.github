@@ -1,6 +1,6 @@
 name: CI
 
-# Thin caller — logic lives in agiletec-inc/.github reusables.
+# Thin caller — logic lives in agiletec-inc/github-actions reusables.
 # Produces required checks: "secret-scan / scan" and "ci / ci".
 # For PRIVATE repos add `with: { runs-on: agiletec-self-hosted-runner }` to each job.
 on:
@@ -13,6 +13,6 @@ concurrency:
 
 jobs:
   secret-scan:
-    uses: agiletec-inc/.github/.github/workflows/secret-scan.yml@main
+    uses: agiletec-inc/github-actions/.github/workflows/secret-scan.yml@main
   ci:
-    uses: agiletec-inc/.github/.github/workflows/rust-cargo-ci.yml@main
+    uses: agiletec-inc/github-actions/.github/workflows/rust-cargo-ci.yml@main
