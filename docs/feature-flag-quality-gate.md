@@ -1,14 +1,11 @@
-# Feature Flag Quality Gate
+# Feature flag品質gate
 
-`quality-gate` runs this check in every repository. A repository without
-`.airis/flags.toml` succeeds without a feature-flag check. Repositories that
-declare flags own their flag metadata and the two test commands below.
+organizationの`quality-gate`は全repoでfeature flagを検証する。`.airis/flags.toml`がないrepoはこのcheckをskipして
+成功する。flagを宣言するrepoがmetadataとoff/on test commandを所有する。
 
-The organization ruleset enforces `.github/workflows/org-quality-gate.yml`.
-It has `pull_request` and `merge_group` triggers and delegates to this reusable
-quality gate; callers must not add path filters to their own quality workflow.
-Repositories without one of the supported language manifests still receive the
-secret and feature-flag gates; their language-specific jobs are skipped.
+organization rulesetは`.github/workflows/org-quality-gate.yml`を必須化する。workflowは`pull_request`と
+`merge_group`からreusable quality gateを呼び、caller側でpath filterを加えない。対応language manifestがない
+repoでもsecret/flag gateは実行し、language固有jobだけをskipする。
 
 ```toml
 [[flags]]
@@ -28,7 +25,5 @@ command = "pnpm test:checkout-v2-on"
 environment = { CHECKOUT_V2 = "true" }
 ```
 
-`release` and `experiment` flags are temporary. They require an owner, an
-unexpired `expires` date, a cleanup issue, and successful off/on tests. `ops`,
-`permission`, and `kill_switch` flags require an owner but are not required to
-have an expiry or test pair.
+`release`と`experiment`は一時flagなのでowner、未来の`expires`、cleanup Issue、off/on testを必須とする。
+`ops`、`permission`、`kill_switch`はownerを必須とするが、expiryとtest pairは必須にしない。
