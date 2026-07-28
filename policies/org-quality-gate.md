@@ -1,10 +1,7 @@
-# Organization quality gate contract
+# Organization quality gate契約
 
-The organization-required workflow runs the same gate for every repository: stack detection picks
-the applicable generic language jobs (Node, Bun, Python, Rust, Swift), and the secret scan,
-feature-flag check, and final aggregator always run.
+organization required workflowは全repoへ同じgateを適用する。stack detectionがNode、Bun、Python、Rust、Swiftの
+該当jobを選び、secret scan、feature flag check、final aggregatorは常に実行する。
 
-There is no per-repository exception mechanism (owner ruling 2026-07-24). A repository with its own
-native CI still runs the generic stack jobs; duplication is accepted in exchange for a single
-uniform gate. Do not reintroduce repository-name conditions or opt-out inputs into
-`org-quality-gate.yml` / `quality-gate.yml`.
+repo別の例外機構は設けない。native CIを持つrepoでもgeneric stack jobを実行し、単一で均一なgateを優先する。
+`org-quality-gate.yml` / `quality-gate.yml`へrepo名条件やopt-out inputを再導入しない。
