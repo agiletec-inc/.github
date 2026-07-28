@@ -13,7 +13,7 @@ concurrency:
 jobs:
   ci:
     name: ci
-    uses: agiletec-inc/.github/.github/workflows/quality-gate.yml@main
+    uses: agiletec-inc/github-actions/.github/workflows/quality-gate.yml@main
     with:
       linux-runs-on: ${{ github.repository_visibility == 'private' && 'agiletec-self-hosted-runner' || 'ubuntu-latest' }}
       swift-runs-on: ${{ github.repository_visibility == 'private' && 'agiletec-self-hosted-runner' || 'macos-latest' }}
