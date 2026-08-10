@@ -1,0 +1,72 @@
+name: Organization quality gate
+
+# This entrypoint is suitable for a required-workflow ruleset: it always starts
+# for pull requests and merge-queue entries, and the final job always reports.
+on:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    name: detect
+    runs-on: ubuntu-24.04
+    outputs:
+      cmd-ime-swift: ${{ steps.capabilities.outputs.cmd-ime-swift }}
+      airis-keeper-node: ${{ steps.capabilities.outputs.airis-keeper-node }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: capabilities
+        name: Detect supported consumer lanes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmd_ime_swift=false
+          airis_keeper_node=false
+          if [ -f apps/cmd-ime-swift/Package.swift ]; then cmd_ime_swift=true; fi
+          if [ -f package.json ] && [ -f pnpm-lock.yaml ]; then airis_keeper_node=true; fi
+          {
+            echo "cmd-ime-swift=$cmd_ime_swift"
+            echo "airis-keeper-node=$airis_keeper_node"
+          } >> "$GITHUB_OUTPUT"
+
+  secret-scan:
+    name: secret-scan
+    uses: ./.github/workflows/secret-scan.yml
+
+  cmd-ime-swift-ci:
+    name: cmd-ime-swift-ci
+    needs: detect
+    if: ${{ needs.detect.outputs.cmd-ime-swift == 'true' }}
+    uses: ./.github/workflows/swift-ci.yml
+    with:
+      working-directory: apps/cmd-ime-swift
+      release-command: CMDIME_BUILD_MODE=local bash scripts/package.sh
+
+  airis-keeper-node-ci:
+    name: airis-keeper-node-ci
+    needs: detect
+    if: ${{ needs.detect.outputs.airis-keeper-node == 'true' }}
+    uses: ./.github/workflows/node-pnpm-ci.yml
+    with:
+      node-version: '20'
+      package-manager: pnpm
+
+  quality-gate:
+    name: quality-gate
+    needs: [detect, secret-scan, cmd-ime-swift-ci, airis-keeper-node-ci]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: evaluate
+        name: Evaluate applicable jobs
+        uses: ./.github/actions/evaluate-required-gate
+        with:
+          needs: ${{ toJSON(needs) }}
+          detected: >-
+            {"secret-scan": true,
+             "cmd-ime-swift-ci": ${{ needs.detect.outputs.cmd-ime-swift == 'true' }},
+             "airis-keeper-node-ci": ${{ needs.detect.outputs.airis-keeper-node == 'true' }}}
