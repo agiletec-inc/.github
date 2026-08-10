@@ -1,0 +1,42 @@
+name: Swift CI
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        default: ''
+      timeout-minutes:
+        type: number
+        default: 30
+      test:
+        type: boolean
+        default: true
+      release-build:
+        type: boolean
+        default: true
+      release-command:
+        type: string
+        default: swift build -c release
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: ci
+    runs-on: macos-14
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory || '.' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Swift version
+        run: swift --version
+      - name: Test
+        if: inputs.test
+        run: swift test
+      - name: Release build smoke
+        if: inputs.release-build
+        run: ${{ inputs.release-command }}
