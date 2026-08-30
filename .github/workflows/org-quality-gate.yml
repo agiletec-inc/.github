@@ -1,7 +1,8 @@
-name: Organization quality gate
+name: Public organization quality gate
 
-# This entrypoint is suitable for a required-workflow ruleset: it always starts
-# for pull requests and merge-queue entries, and the final job always reports.
+# Ruleset workflows execute in the consumer repository. Keep this workflow
+# self-contained: relative reusable workflows/actions would resolve in the
+# consumer, not in this public source repository.
 on:
   pull_request:
   merge_group:
@@ -14,59 +15,175 @@ jobs:
     name: detect
     runs-on: ubuntu-24.04
     outputs:
-      cmd-ime-swift: ${{ steps.capabilities.outputs.cmd-ime-swift }}
-      airis-keeper-node: ${{ steps.capabilities.outputs.airis-keeper-node }}
+      node: ${{ steps.capabilities.outputs.node }}
+      python: ${{ steps.capabilities.outputs.python }}
+      swift: ${{ steps.capabilities.outputs.swift }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - id: capabilities
-        name: Detect supported consumer lanes
+        name: Detect repository capabilities
         shell: bash
         run: |
           set -euo pipefail
-          cmd_ime_swift=false
-          airis_keeper_node=false
-          if [ -f apps/cmd-ime-swift/Package.swift ]; then cmd_ime_swift=true; fi
-          if [ -f package.json ] && [ -f pnpm-lock.yaml ]; then airis_keeper_node=true; fi
+          node=false
+          python=false
+          swift=false
+          test -f package.json && node=true
+          find . -name uv.lock -not -path '*/.git/*' -print -quit | grep -q . && python=true
+          find . -name Package.swift -not -path '*/.build/*' -not -path '*/.git/*' -print -quit | grep -q . && swift=true
           {
-            echo "cmd-ime-swift=$cmd_ime_swift"
-            echo "airis-keeper-node=$airis_keeper_node"
+            echo "node=$node"
+            echo "python=$python"
+            echo "swift=$swift"
           } >> "$GITHUB_OUTPUT"
 
   secret-scan:
     name: secret-scan
-    uses: ./.github/workflows/secret-scan.yml
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Run Gitleaks
+        shell: bash
+        env:
+          GITLEAKS_VERSION: '8.30.1'
+        run: |
+          set -euo pipefail
+          asset="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
+          curl -fsSLO "$base/$asset"
+          curl -fsSLo checksums.txt "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
+          grep "  ${asset}$" checksums.txt | sha256sum -c -
+          tar -xzf "$asset" gitleaks
+          config=()
+          test ! -f .gitleaks.toml || config=(--config .gitleaks.toml)
+          if [ "$GITHUB_EVENT_NAME" = pull_request ]; then
+            range='${{ github.event.pull_request.base.sha }}..HEAD'
+          else
+            range='${{ github.event.merge_group.base_sha }}..HEAD'
+          fi
+          ./gitleaks git "${config[@]}" --redact --no-banner --exit-code 1 --log-opts "$range" .
 
-  cmd-ime-swift-ci:
-    name: cmd-ime-swift-ci
+  node-ci:
+    name: node-ci
     needs: detect
-    if: ${{ needs.detect.outputs.cmd-ime-swift == 'true' }}
-    uses: ./.github/workflows/swift-ci.yml
-    with:
-      working-directory: apps/cmd-ime-swift
-      release-command: CMDIME_BUILD_MODE=local bash scripts/package.sh
+    if: ${{ needs.detect.outputs.node == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        if: ${{ hashFiles('pnpm-lock.yaml') != '' }}
+      - name: Install and run declared quality scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f pnpm-lock.yaml ]; then
+            pm=pnpm
+            pnpm install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
+            pm=npm
+            npm ci
+          else
+            echo '::error::package.json requires pnpm-lock.yaml or package-lock.json'
+            exit 1
+          fi
+          node <<'NODE'
+          const scripts = require('./package.json').scripts ?? {};
+          const required = ['lint', 'typecheck', 'test', 'build'];
+          const missing = required.filter((name) => !Object.hasOwn(scripts, name));
+          if (missing.length) throw new Error(`missing required package scripts: ${missing.join(', ')}`);
+          NODE
+          "$pm" run lint
+          "$pm" run typecheck
+          "$pm" test
+          "$pm" run build
+          "$pm" audit --audit-level=high
 
-  airis-keeper-node-ci:
-    name: airis-keeper-node-ci
+  python-ci:
+    name: python-ci
     needs: detect
-    if: ${{ needs.detect.outputs.airis-keeper-node == 'true' }}
-    uses: ./.github/workflows/node-pnpm-ci.yml
-    with:
-      node-version: '20'
-      package-manager: pnpm
+    if: ${{ needs.detect.outputs.python == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: '0.12.7'
+          enable-cache: true
+      - name: Sync and test every locked Python workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t locks < <(find . -name uv.lock -not -path '*/.git/*' -print | sort)
+          test "${#locks[@]}" -gt 0
+          for lock in "${locks[@]}"; do
+            directory=$(dirname "$lock")
+            uv sync --directory "$directory" --locked --all-groups
+            uv run --directory "$directory" pytest
+          done
+
+  swift-ci:
+    name: swift-ci
+    needs: detect
+    if: ${{ needs.detect.outputs.swift == 'true' }}
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test and release-build every Swift package
+        shell: bash
+        run: |
+          set -euo pipefail
+          packages=()
+          while IFS= read -r manifest; do packages+=("$(dirname "$manifest")"); done < <(
+            find . -name Package.swift -not -path '*/.build/*' -not -path '*/.git/*' -print | sort
+          )
+          test "${#packages[@]}" -gt 0
+          swift --version
+          for directory in "${packages[@]}"; do
+            swift test --package-path "$directory"
+            swift build --package-path "$directory" -c release
+          done
 
   quality-gate:
     name: quality-gate
-    needs: [detect, secret-scan, cmd-ime-swift-ci, airis-keeper-node-ci]
-    if: ${{ always() }}
+    needs: [detect, secret-scan, node-ci, python-ci, swift-ci]
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - id: evaluate
-        name: Evaluate applicable jobs
-        uses: ./.github/actions/evaluate-required-gate
-        with:
-          needs: ${{ toJSON(needs) }}
-          detected: >-
-            {"secret-scan": true,
-             "cmd-ime-swift-ci": ${{ needs.detect.outputs.cmd-ime-swift == 'true' }},
-             "airis-keeper-node-ci": ${{ needs.detect.outputs.airis-keeper-node == 'true' }}}
+      - name: Evaluate applicable jobs
+        shell: bash
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          DETECTED: >-
+            {"detect": true,
+             "secret-scan": true,
+             "node-ci": ${{ needs.detect.outputs.node == 'true' }},
+             "python-ci": ${{ needs.detect.outputs.python == 'true' }},
+             "swift-ci": ${{ needs.detect.outputs.swift == 'true' }}}
+        run: |
+          node <<'NODE'
+          const needs = JSON.parse(process.env.NEEDS);
+          const detected = JSON.parse(process.env.DETECTED);
+          const failures = [];
+          for (const [job, applicable] of Object.entries(detected)) {
+            const result = needs[job]?.result ?? 'missing';
+            if (applicable === true && result !== 'success') failures.push(`${job}=${result}`);
+            if (result === 'failure' || result === 'cancelled') failures.push(`${job}=${result}`);
+          }
+          if (failures.length) {
+            console.error(`Quality gate failed: ${[...new Set(failures)].join(', ')}`);
+            process.exit(1);
+          }
+          console.log('Quality gate passed: all applicable jobs succeeded.');
+          NODE
